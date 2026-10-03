@@ -1,9 +1,7 @@
 module.exports = (req, res) => {
-  const apiUrl = process.env.API_URL?.trim().replace(/\/+$/, '');
-
-  if (!apiUrl) {
-    return res.status(500).json({ error: 'Falta configurar API_URL en Vercel.' });
-  }
+  const apiUrl = (process.env.API_URL || 'https://ecoscannback.onrender.com/api')
+    .trim()
+    .replace(/\/+$/, '');
 
   let parsedUrl;
   try {
