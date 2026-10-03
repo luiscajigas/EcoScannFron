@@ -4,35 +4,38 @@
       <span class="brand__mark" aria-hidden="true">🌱</span>
       <div>
         <h1>EcoScan</h1>
-        <p>Pequeñas acciones, gran impacto</p>
+        <p>{{ idioma.t('dashboardTagline') }}</p>
       </div>
     </div>
     <div class="topbar__account">
-      <button class="link theme-toggle" type="button" (click)="tema.alternar()" [attr.aria-label]="tema.modoClaro() ? 'Cambiar a modo oscuro' : 'Cambiar a modo claro'">
+      <button class="link language-toggle" type="button" (click)="idioma.toggle()" [attr.aria-label]="idioma.t('switchLanguage')">
+        {{ idioma.language() === 'es' ? 'EN' : 'ES' }}
+      </button>
+      <button class="link theme-toggle" type="button" (click)="tema.alternar()" [attr.aria-label]="tema.modoClaro() ? idioma.t('themeDarkAria') : idioma.t('themeLightAria')">
         <span aria-hidden="true">{{ tema.modoClaro() ? '☾' : '☀' }}</span>
-        {{ tema.modoClaro() ? 'Modo oscuro' : 'Modo claro' }}
+        {{ tema.modoClaro() ? idioma.t('themeDark') : idioma.t('themeLight') }}
       </button>
       @if (usuario) {
         <div class="user-pill">
           <span class="user-pill__initial">{{ usuario.nombre.charAt(0).toUpperCase() }}</span>
-          <span>Hola, <strong>{{ usuario.nombre }}</strong></span>
+          <span>{{ idioma.t('greeting') }} <strong>{{ usuario.nombre }}</strong></span>
         </div>
       }
-      <button class="link" type="button" (click)="salir()">Cerrar sesión</button>
+      <button class="link" type="button" (click)="salir()">{{ idioma.t('signOut') }}</button>
     </div>
   </header>
 
   <section class="welcome">
     <div>
-      <p class="eyebrow">Tu espacio sostenible</p>
-      <h2>Cada residuo cuenta.</h2>
-      <p class="welcome__copy">Toma una foto, descubre dónde va y convierte tus buenos hábitos en puntos.</p>
+      <p class="eyebrow">{{ idioma.t('dashboardEyebrow') }}</p>
+      <h2>{{ idioma.t('dashboardHeadline') }}</h2>
+      <p class="welcome__copy">{{ idioma.t('dashboardIntro') }}</p>
     </div>
     @if (usuario) {
       <div class="score-card">
         <span class="score-card__icon" aria-hidden="true">✦</span>
         <div>
-          <span class="score-card__label">Tus puntos</span>
+          <span class="score-card__label">{{ idioma.t('yourPoints') }}</span>
           <strong>{{ usuario.puntos }} pts</strong>
         </div>
       </div>
@@ -42,8 +45,8 @@
   <div class="workspace">
     <section class="scanner-card">
       <div class="section-heading">
-        <h3>Escanea un residuo</h3>
-        <span class="beta-pill">♻ Clasificación beta</span>
+        <h3>{{ idioma.t('scanTitle') }}</h3>
+        <span class="beta-pill">{{ idioma.t('betaClassification') }}</span>
       </div>
 
       <input
@@ -59,14 +62,14 @@
         class="captura__zona"
         type="button"
         [disabled]="procesando"
-        [attr.aria-label]="previsualizacion ? 'Elegir otra foto del residuo' : 'Tomar o subir una foto del residuo'"
+        [attr.aria-label]="previsualizacion ? idioma.t('chooseAnotherPhoto') : idioma.t('takeOrUploadPhoto')"
         (click)="abrirSelectorArchivo()"
       >
         @if (previsualizacion) {
           <img [src]="previsualizacion" alt="Vista previa del residuo seleccionado" />
           <span class="captura__overlay">
-            <strong>{{ procesando ? 'Analizando foto…' : 'Toca para elegir otra foto' }}</strong>
-            <span>Procura que el residuo se vea con claridad</span>
+            <strong>{{ procesando ? idioma.t('analyzePhoto') : idioma.t('chooseAnother') }}</strong>
+            <span>{{ idioma.t('photoTip') }}</span>
           </span>
         } @else {
           <span class="captura__placeholder">
@@ -76,14 +79,14 @@
                 <circle cx="12" cy="13" r="3.5"/>
               </svg>
             </span>
-            <strong>Tu próximo escaneo empieza aquí</strong>
-            <span>Toca para tomar una foto o elegirla de tu galería</span>
+            <strong>{{ idioma.t('firstScan') }}</strong>
+            <span>{{ idioma.t('takeOrChoose') }}</span>
           </span>
         }
       </button>
 
       @if (procesando) {
-        <p class="procesando" role="status">Estamos preparando tu clasificación…</p>
+        <p class="procesando" role="status">{{ idioma.t('processing') }}</p>
       }
       @if (error) {
         <p class="error" role="alert">{{ error }}</p>
@@ -91,24 +94,24 @@
     </section>
 
     <aside class="side-card">
-      <p class="eyebrow">Una buena foto ayuda</p>
-      <h3>3 pasos sencillos</h3>
-      <p class="side-card__lead">Sigue estas recomendaciones para obtener el mejor resultado.</p>
+      <p class="eyebrow">{{ idioma.t('photoEyebrow') }}</p>
+      <h3>{{ idioma.t('threeSteps') }}</h3>
+      <p class="side-card__lead">{{ idioma.t('photoIntro') }}</p>
       <ol class="steps">
         <li>
           <span class="steps__number">01</span>
-          <div><strong>Enfoca un solo residuo</strong><p>Evita poner varios objetos juntos.</p></div>
+          <div><strong>{{ idioma.t('stepOneTitle') }}</strong><p>{{ idioma.t('stepOneText') }}</p></div>
         </li>
         <li>
           <span class="steps__number">02</span>
-          <div><strong>Busca buena iluminación</strong><p>La luz natural permite ver mejor los detalles.</p></div>
+          <div><strong>{{ idioma.t('stepTwoTitle') }}</strong><p>{{ idioma.t('stepTwoText') }}</p></div>
         </li>
         <li>
           <span class="steps__number">03</span>
-          <div><strong>Revisa dónde depositarlo</strong><p>Te mostraremos la categoría y el contenedor recomendado.</p></div>
+          <div><strong>{{ idioma.t('stepThreeTitle') }}</strong><p>{{ idioma.t('stepThreeText') }}</p></div>
         </li>
       </ol>
-      <div class="tip"><span aria-hidden="true">💡</span><span>Coloca el objeto sobre un fondo simple para que destaque.</span></div>
+      <div class="tip"><span aria-hidden="true">💡</span><span>{{ idioma.t('photoBackgroundTip') }}</span></div>
     </aside>
   </div>
 
@@ -116,29 +119,29 @@
     <section class="resultado" aria-live="polite">
       <div class="resultado__top">
         <div>
-          <p class="eyebrow">Resultado de tu escaneo</p>
-          <h2>{{ resultado.categoria.nombre }}</h2>
+          <p class="eyebrow">{{ idioma.t('resultEyebrow') }}</p>
+          <h2>{{ idioma.categoryName(resultado.categoria.clave, resultado.categoria.nombre) }}</h2>
           <p class="contenedor contenedor--{{ resultado.categoria.color_contenedor }}">
-            Contenedor {{ resultado.categoria.color_contenedor }}
+            {{ idioma.t('container') }} {{ idioma.containerName(resultado.categoria.color_contenedor) }}
           </p>
         </div>
-        <span class="resultado__tag">¡Buen trabajo! +{{ resultado.puntosOtorgados }} pts</span>
+        <span class="resultado__tag">{{ idioma.t('goodJob') }} +{{ resultado.puntosOtorgados }} pts</span>
       </div>
-      <p class="resultado__instructions">{{ resultado.categoria.instrucciones }}</p>
+      <p class="resultado__instructions">{{ idioma.categoryInstructions(resultado.categoria.clave, resultado.categoria.instrucciones) }}</p>
       <div class="resultado__footer">
-        <p class="puntos">Puntaje total: {{ resultado.puntosTotales }} pts</p>
-        <p class="aviso-ia">{{ resultado.avisoIA }}</p>
+        <p class="puntos">{{ idioma.t('totalScore') }} {{ resultado.puntosTotales }} pts</p>
+        <p class="aviso-ia">{{ idioma.t('iaNotice') }}</p>
       </div>
     </section>
   }
 
   <section class="historial">
     <div class="historial__heading">
-      <h2>Tu actividad</h2>
-      <span class="historial__count">{{ historial.length }} {{ historial.length === 1 ? 'escaneo' : 'escaneos' }}</span>
+      <h2>{{ idioma.t('activity') }}</h2>
+      <span class="historial__count">{{ historial.length }} {{ historial.length === 1 ? idioma.t('scanOne') : idioma.t('scanMany') }}</span>
     </div>
     @if (cargandoHistorial) {
-      <p class="empty-state">Cargando tu historial…</p>
+      <p class="empty-state">{{ idioma.t('loadingHistory') }}</p>
     }
     @if (!cargandoHistorial && historial.length) {
       <ul>
@@ -146,7 +149,7 @@
           <li>
             <span class="historial__name">
               <span class="chip-dot chip-dot--{{ e.color_contenedor }}" aria-hidden="true"></span>
-              <span class="chip">{{ e.categoria_nombre }}</span>
+              <span class="chip">{{ idioma.categoryName(e.categoria_clave, e.categoria_nombre) }}</span>
             </span>
             <span class="historial__points">+{{ e.puntos_otorgados }} pts</span>
           </li>
@@ -154,7 +157,7 @@
       </ul>
     }
     @if (!cargandoHistorial && !historial.length) {
-      <p class="empty-state">Aún no hay escaneos. ¡El primero puede ser hoy!</p>
+      <p class="empty-state">{{ idioma.t('noScans') }}</p>
     }
   </section>
 </main>

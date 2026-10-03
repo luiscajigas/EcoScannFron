@@ -58,6 +58,8 @@ app-dashboard {
 .brand h1 { margin: 0; font-size: 1.25rem; letter-spacing: -0.04em; }
 .brand p { margin: 0.16rem 0 0; color: var(--muted); font-size: 0.8rem; }
 .topbar__account { gap: 1rem; }
+.topbar__account .language-toggle,
+.topbar__account .theme-toggle { margin-left: 0; }
 
 .user-pill {
   display: flex;

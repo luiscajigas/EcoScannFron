@@ -48,6 +48,8 @@ button, input { font: inherit; }
 .auth__brand-name { font-size: 1.2rem; font-weight: 750; letter-spacing: -0.04em; }
 .theme-toggle { display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; min-height: 36px; margin-left: auto; padding: 0.4rem 0.7rem; border: 1px solid rgba(184, 215, 194, 0.18); border-radius: 999px; background: rgba(255, 255, 255, 0.025); color: inherit; font: inherit; font-size: 0.75rem; cursor: pointer; transition: background 160ms ease, border-color 160ms ease; }
 .theme-toggle:hover { border-color: rgba(165, 230, 110, 0.4); background: rgba(165, 230, 110, 0.06); }
+.language-toggle { display: inline-grid; min-width: 38px; min-height: 36px; place-items: center; margin-left: auto; padding: 0.35rem 0.55rem; border: 1px solid rgba(184, 215, 194, 0.18); border-radius: 999px; background: rgba(255, 255, 255, 0.025); color: inherit; font: inherit; font-size: 0.72rem; font-weight: 700; cursor: pointer; transition: background 160ms ease, border-color 160ms ease; }
+.language-toggle:hover { border-color: rgba(165, 230, 110, 0.4); background: rgba(165, 230, 110, 0.06); }
 .auth__eyebrow { margin: 0 0 0.8rem; color: #a5e66e; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; }
 .auth__intro h1 { max-width: 460px; margin: 0; font-size: clamp(2.6rem, 6vw, 4.2rem); letter-spacing: -0.075em; line-height: 1.02; }
 .auth__intro-copy { max-width: 390px; margin: 1.1rem 0 0; color: #a4b3a9; font-size: 1rem; line-height: 1.7; }
@@ -154,8 +156,10 @@ button, input { font: inherit; }
 :root[data-theme='light'] .auth__card button:not(.secundario) { background: linear-gradient(100deg, #94d45e, #74c99a); }
 :root[data-theme='light'] .auth__card .link-registro { color: #6d7d71; }
 :root[data-theme='light'] .auth__card .link-registro a { color: #287d70; }
-:root[data-theme='light'] .auth__brand .theme-toggle { border-color: #d5e0d5; background: rgba(255, 255, 255, 0.55); color: #405347; }
-:root[data-theme='light'] .auth__brand .theme-toggle:hover { border-color: #8ebd72; background: #eef6e9; }
+:root[data-theme='light'] .auth__brand .theme-toggle,
+:root[data-theme='light'] .auth__brand .language-toggle { border-color: #d5e0d5; background: rgba(255, 255, 255, 0.55); color: #405347; }
+:root[data-theme='light'] .auth__brand .theme-toggle:hover,
+:root[data-theme='light'] .auth__brand .language-toggle:hover { border-color: #8ebd72; background: #eef6e9; }
 
 @media (max-width: 760px) {
   .auth__brand { flex-wrap: wrap; }

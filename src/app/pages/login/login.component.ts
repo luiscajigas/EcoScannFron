@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ThemeService } from '../../services/theme.service';
+import { LanguageService } from '../../services/language.service';
 
 @Component({
     selector: 'app-login',
@@ -18,7 +19,12 @@ export class LoginComponent {
   cargando = false;
   error: string | null = null;
 
-  constructor(private auth: AuthService, private router: Router, readonly tema: ThemeService) {}
+  constructor(
+    private auth: AuthService,
+    private router: Router,
+    readonly tema: ThemeService,
+    readonly idioma: LanguageService
+  ) {}
 
   ingresar(): void {
     this.cargando = true;
@@ -30,7 +36,7 @@ export class LoginComponent {
       },
       error: (err) => {
         this.cargando = false;
-        this.error = err.error?.error || 'No se pudo iniciar sesión.';
+        this.error = this.idioma.apiError(err.error?.error, 'loginError');
       }
     });
   }

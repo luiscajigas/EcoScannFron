@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { EscaneoService } from '../../services/escaneo.service';
 import { ThemeService } from '../../services/theme.service';
+import { LanguageService } from '../../services/language.service';
 import { Escaneo, ResultadoEscaneo } from '../../models/models';
 
 @Component({
@@ -29,7 +30,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private auth: AuthService,
     private escaneoService: EscaneoService,
     private router: Router,
-    readonly tema: ThemeService
+    readonly tema: ThemeService,
+    readonly idioma: LanguageService
   ) {}
 
   ngOnInit(): void {
@@ -37,7 +39,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.worker = new Worker(new URL('../../workers/analisis.worker', import.meta.url));
       this.worker.onmessage = ({ data }) => this.manejarResultadoWorker(data);
     } else {
-      this.error = 'Tu navegador no soporta Web Workers.';
+      this.error = this.idioma.t('workerError');
     }
 
     this.cargarHistorial();
@@ -54,7 +56,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.historial = lista;
         this.cargandoHistorial = false;
       },
-      error: () => (this.cargandoHistorial = false)
+      error: (err) => {
+        this.cargandoHistorial = false;
+        this.error = this.idioma.apiError(err.error?.error, 'scanLoadError');
+      }
     });
   }
 
@@ -78,7 +83,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private manejarResultadoWorker(data: any): void {
     if (!data.ok) {
       this.procesando = false;
-      this.error = 'No se pudo procesar la imagen: ' + data.error;
+      this.error = `${this.idioma.t('imageError')} ${data.error}`;
       return;
     }
 
@@ -93,7 +98,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.procesando = false;
-        this.error = err.error?.error || 'No se pudo registrar el escaneo.';
+        this.error = this.idioma.apiError(err.error?.error, 'saveScanError');
       }
     });
   }
