@@ -1,73 +1,156 @@
 <main class="page">
   <header class="topbar">
-    <div>
-      <h1>🌱 EcoScan</h1>
-      @if (usuario) {
-        <p>Hola, {{ usuario.nombre }} · <strong>{{ usuario.puntos }} pts</strong></p>
-      }
+    <div class="brand">
+      <span class="brand__mark" aria-hidden="true">🌱</span>
+      <div>
+        <h1>EcoScan</h1>
+        <p>Pequeñas acciones, gran impacto</p>
+      </div>
     </div>
-    <button class="link" (click)="salir()">Cerrar sesión</button>
-  </header>
-
-  <section class="captura">
-    <input
-      #inputArchivo
-      type="file"
-      accept="image/*"
-      capture="environment"
-      hidden
-      (change)="onArchivoSeleccionado($event)"
-      />
-
-    <div class="captura__zona" (click)="abrirSelectorArchivo()">
-      @if (previsualizacion) {
-        <img [src]="previsualizacion" alt="Foto del residuo" />
-      }
-      @if (!previsualizacion) {
-        <div class="captura__placeholder">
-          <span>📷</span>
-          <p>Toca para tomar o subir una foto del residuo</p>
+    <div class="topbar__account">
+      @if (usuario) {
+        <div class="user-pill">
+          <span class="user-pill__initial">{{ usuario.nombre.charAt(0).toUpperCase() }}</span>
+          <span>Hola, <strong>{{ usuario.nombre }}</strong></span>
         </div>
       }
+      <button class="link" type="button" (click)="salir()">Cerrar sesión</button>
     </div>
+  </header>
 
-    @if (procesando) {
-      <p class="procesando">Analizando imagen en el Web Worker...</p>
-    }
-    @if (error) {
-      <p class="error">{{ error }}</p>
+  <section class="welcome">
+    <div>
+      <p class="eyebrow">Tu espacio sostenible</p>
+      <h2>Cada residuo cuenta.</h2>
+      <p class="welcome__copy">Toma una foto, descubre dónde va y convierte tus buenos hábitos en puntos.</p>
+    </div>
+    @if (usuario) {
+      <div class="score-card">
+        <span class="score-card__icon" aria-hidden="true">✦</span>
+        <div>
+          <span class="score-card__label">Tus puntos</span>
+          <strong>{{ usuario.puntos }} pts</strong>
+        </div>
+      </div>
     }
   </section>
 
+  <div class="workspace">
+    <section class="scanner-card">
+      <div class="section-heading">
+        <h3>Escanea un residuo</h3>
+        <span class="beta-pill">♻ Clasificación beta</span>
+      </div>
+
+      <input
+        #inputArchivo
+        type="file"
+        accept="image/*"
+        capture="environment"
+        hidden
+        (change)="onArchivoSeleccionado($event)"
+      />
+
+      <button
+        class="captura__zona"
+        type="button"
+        [disabled]="procesando"
+        [attr.aria-label]="previsualizacion ? 'Elegir otra foto del residuo' : 'Tomar o subir una foto del residuo'"
+        (click)="abrirSelectorArchivo()"
+      >
+        @if (previsualizacion) {
+          <img [src]="previsualizacion" alt="Vista previa del residuo seleccionado" />
+          <span class="captura__overlay">
+            <strong>{{ procesando ? 'Analizando foto…' : 'Toca para elegir otra foto' }}</strong>
+            <span>Procura que el residuo se vea con claridad</span>
+          </span>
+        } @else {
+          <span class="captura__placeholder">
+            <span class="capture-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 7.5h3l1.5-2h7l1.5 2h3a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 20 19.5H4A1.5 1.5 0 0 1 2.5 18V9A1.5 1.5 0 0 1 4 7.5Z"/>
+                <circle cx="12" cy="13" r="3.5"/>
+              </svg>
+            </span>
+            <strong>Tu próximo escaneo empieza aquí</strong>
+            <span>Toca para tomar una foto o elegirla de tu galería</span>
+          </span>
+        }
+      </button>
+
+      @if (procesando) {
+        <p class="procesando" role="status">Estamos preparando tu clasificación…</p>
+      }
+      @if (error) {
+        <p class="error" role="alert">{{ error }}</p>
+      }
+    </section>
+
+    <aside class="side-card">
+      <p class="eyebrow">Una buena foto ayuda</p>
+      <h3>3 pasos sencillos</h3>
+      <p class="side-card__lead">Sigue estas recomendaciones para obtener el mejor resultado.</p>
+      <ol class="steps">
+        <li>
+          <span class="steps__number">01</span>
+          <div><strong>Enfoca un solo residuo</strong><p>Evita poner varios objetos juntos.</p></div>
+        </li>
+        <li>
+          <span class="steps__number">02</span>
+          <div><strong>Busca buena iluminación</strong><p>La luz natural permite ver mejor los detalles.</p></div>
+        </li>
+        <li>
+          <span class="steps__number">03</span>
+          <div><strong>Revisa dónde depositarlo</strong><p>Te mostraremos la categoría y el contenedor recomendado.</p></div>
+        </li>
+      </ol>
+      <div class="tip"><span aria-hidden="true">💡</span><span>Coloca el objeto sobre un fondo simple para que destaque.</span></div>
+    </aside>
+  </div>
+
   @if (resultado) {
-    <section class="resultado">
-      <h2>{{ resultado.categoria.nombre }}</h2>
-      <p class="contenedor contenedor--{{ resultado.categoria.color_contenedor }}">
-        Contenedor {{ resultado.categoria.color_contenedor }}
-      </p>
-      <p>{{ resultado.categoria.instrucciones }}</p>
-      <p class="puntos">+{{ resultado.puntosOtorgados }} puntos (total: {{ resultado.puntosTotales }})</p>
-      <p class="aviso-ia">{{ resultado.avisoIA }}</p>
+    <section class="resultado" aria-live="polite">
+      <div class="resultado__top">
+        <div>
+          <p class="eyebrow">Resultado de tu escaneo</p>
+          <h2>{{ resultado.categoria.nombre }}</h2>
+          <p class="contenedor contenedor--{{ resultado.categoria.color_contenedor }}">
+            Contenedor {{ resultado.categoria.color_contenedor }}
+          </p>
+        </div>
+        <span class="resultado__tag">¡Buen trabajo! +{{ resultado.puntosOtorgados }} pts</span>
+      </div>
+      <p class="resultado__instructions">{{ resultado.categoria.instrucciones }}</p>
+      <div class="resultado__footer">
+        <p class="puntos">Puntaje total: {{ resultado.puntosTotales }} pts</p>
+        <p class="aviso-ia">{{ resultado.avisoIA }}</p>
+      </div>
     </section>
   }
 
   <section class="historial">
-    <h2>Tu historial</h2>
+    <div class="historial__heading">
+      <h2>Tu actividad</h2>
+      <span class="historial__count">{{ historial.length }} {{ historial.length === 1 ? 'escaneo' : 'escaneos' }}</span>
+    </div>
     @if (cargandoHistorial) {
-      <p>Cargando...</p>
+      <p class="empty-state">Cargando tu historial…</p>
     }
     @if (!cargandoHistorial && historial.length) {
       <ul>
-        @for (e of historial; track e) {
+        @for (e of historial; track e.id) {
           <li>
-            <span class="chip chip--{{ e.color_contenedor }}">{{ e.categoria_nombre }}</span>
-            <span class="muted">+{{ e.puntos_otorgados }} pts</span>
+            <span class="historial__name">
+              <span class="chip-dot chip-dot--{{ e.color_contenedor }}" aria-hidden="true"></span>
+              <span class="chip">{{ e.categoria_nombre }}</span>
+            </span>
+            <span class="historial__points">+{{ e.puntos_otorgados }} pts</span>
           </li>
         }
       </ul>
     }
     @if (!cargandoHistorial && !historial.length) {
-      <p class="muted">Aún no has escaneado nada.</p>
+      <p class="empty-state">Aún no hay escaneos. ¡El primero puede ser hoy!</p>
     }
   </section>
 </main>
