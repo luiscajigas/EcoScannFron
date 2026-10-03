@@ -1,0 +1,91 @@
+:host {
+  --bg: #0e1511;
+  --panel: #182019;
+  --border: #2a3630;
+  --text: #f1f5f2;
+  --muted: #93a398;
+  --accent: #52c98a;
+  --accent-2: #3fa5d8;
+  display: block;
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+.page {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+  font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+  color: var(--text);
+}
+
+.topbar { display: flex; justify-content: space-between; align-items: flex-start; }
+.topbar h1 { margin: 0; }
+.topbar p { margin: 0.15rem 0 0; color: var(--muted); }
+
+.link { background: none; border: none; color: var(--accent-2); text-decoration: underline; cursor: pointer; font-size: 0.85rem; }
+
+.captura { margin-top: 1.5rem; }
+
+.captura__zona {
+  background: var(--panel);
+  border: 2px dashed var(--border);
+  border-radius: 16px;
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.captura__zona img { width: 100%; max-height: 320px; object-fit: cover; }
+
+.captura__placeholder { text-align: center; color: var(--muted); }
+.captura__placeholder span { font-size: 2.5rem; }
+
+.procesando { color: var(--accent-2); margin-top: 0.6rem; }
+.error { color: #ff9d9d; margin-top: 0.6rem; }
+
+.resultado {
+  margin-top: 1.5rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.25rem;
+}
+
+.resultado h2 { margin-top: 0; }
+
+.contenedor {
+  display: inline-block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  margin-bottom: 0.5rem;
+}
+.contenedor--verde { background: rgba(82,201,138,0.18); color: #52c98a; }
+.contenedor--azul { background: rgba(63,165,216,0.18); color: #3fa5d8; }
+.contenedor--blanco { background: rgba(230,230,230,0.15); color: #e6e6e6; }
+.contenedor--negro { background: rgba(255,255,255,0.08); color: var(--muted); }
+
+.puntos { font-weight: 700; color: var(--accent); margin-top: 0.75rem; }
+.aviso-ia { font-size: 0.8rem; color: var(--muted); margin-top: 0.5rem; }
+
+.historial { margin-top: 2rem; }
+.historial h2 { font-size: 1.1rem; }
+.historial ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; }
+.historial li {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+
+.chip { font-weight: 600; }
+.muted { color: var(--muted); }

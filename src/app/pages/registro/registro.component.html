@@ -1,0 +1,25 @@
+<main class="auth">
+  <div class="auth__card">
+    <h1>Crea tu cuenta</h1>
+    <p class="subtitulo">Empieza a sumar puntos clasificando tus residuos.</p>
+
+    <label>Nombre</label>
+    <input type="text" [(ngModel)]="nombre" placeholder="Tu nombre" />
+
+    <label>Correo</label>
+    <input type="email" [(ngModel)]="email" placeholder="tucorreo@demo.com" />
+
+    <label>Contraseña</label>
+    <input type="password" [(ngModel)]="password" placeholder="••••••••" />
+
+    @if (error) {
+      <p class="error">{{ error }}</p>
+    }
+
+    <button (click)="registrar()" [disabled]="cargando || !nombre || !email || !password">
+      {{ cargando ? 'Creando cuenta...' : 'Crear cuenta' }}
+    </button>
+
+    <p class="link-registro">¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a></p>
+  </div>
+</main>

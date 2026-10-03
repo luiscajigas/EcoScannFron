@@ -1,0 +1,73 @@
+<main class="page">
+  <header class="topbar">
+    <div>
+      <h1>🌱 EcoScan</h1>
+      @if (usuario) {
+        <p>Hola, {{ usuario.nombre }} · <strong>{{ usuario.puntos }} pts</strong></p>
+      }
+    </div>
+    <button class="link" (click)="salir()">Cerrar sesión</button>
+  </header>
+
+  <section class="captura">
+    <input
+      #inputArchivo
+      type="file"
+      accept="image/*"
+      capture="environment"
+      hidden
+      (change)="onArchivoSeleccionado($event)"
+      />
+
+    <div class="captura__zona" (click)="abrirSelectorArchivo()">
+      @if (previsualizacion) {
+        <img [src]="previsualizacion" alt="Foto del residuo" />
+      }
+      @if (!previsualizacion) {
+        <div class="captura__placeholder">
+          <span>📷</span>
+          <p>Toca para tomar o subir una foto del residuo</p>
+        </div>
+      }
+    </div>
+
+    @if (procesando) {
+      <p class="procesando">Analizando imagen en el Web Worker...</p>
+    }
+    @if (error) {
+      <p class="error">{{ error }}</p>
+    }
+  </section>
+
+  @if (resultado) {
+    <section class="resultado">
+      <h2>{{ resultado.categoria.nombre }}</h2>
+      <p class="contenedor contenedor--{{ resultado.categoria.color_contenedor }}">
+        Contenedor {{ resultado.categoria.color_contenedor }}
+      </p>
+      <p>{{ resultado.categoria.instrucciones }}</p>
+      <p class="puntos">+{{ resultado.puntosOtorgados }} puntos (total: {{ resultado.puntosTotales }})</p>
+      <p class="aviso-ia">{{ resultado.avisoIA }}</p>
+    </section>
+  }
+
+  <section class="historial">
+    <h2>Tu historial</h2>
+    @if (cargandoHistorial) {
+      <p>Cargando...</p>
+    }
+    @if (!cargandoHistorial && historial.length) {
+      <ul>
+        @for (e of historial; track e) {
+          <li>
+            <span class="chip chip--{{ e.color_contenedor }}">{{ e.categoria_nombre }}</span>
+            <span class="muted">+{{ e.puntos_otorgados }} pts</span>
+          </li>
+        }
+      </ul>
+    }
+    @if (!cargandoHistorial && !historial.length) {
+      <p class="muted">Aún no has escaneado nada.</p>
+    }
+  </section>
+</main>
