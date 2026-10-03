@@ -3,6 +3,7 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ChangeDetectionStr
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { EscaneoService } from '../../services/escaneo.service';
+import { ThemeService } from '../../services/theme.service';
 import { Escaneo, ResultadoEscaneo } from '../../models/models';
 
 @Component({
@@ -27,7 +28,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   constructor(
     private auth: AuthService,
     private escaneoService: EscaneoService,
-    private router: Router
+    private router: Router,
+    readonly tema: ThemeService
   ) {}
 
   ngOnInit(): void {

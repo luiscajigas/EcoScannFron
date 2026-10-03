@@ -8,6 +8,10 @@
       </div>
     </div>
     <div class="topbar__account">
+      <button class="link theme-toggle" type="button" (click)="tema.alternar()" [attr.aria-label]="tema.modoClaro() ? 'Cambiar a modo oscuro' : 'Cambiar a modo claro'">
+        <span aria-hidden="true">{{ tema.modoClaro() ? '☾' : '☀' }}</span>
+        {{ tema.modoClaro() ? 'Modo oscuro' : 'Modo claro' }}
+      </button>
       @if (usuario) {
         <div class="user-pill">
           <span class="user-pill__initial">{{ usuario.nombre.charAt(0).toUpperCase() }}</span>

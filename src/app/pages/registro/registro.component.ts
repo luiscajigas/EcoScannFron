@@ -3,6 +3,7 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
     selector: 'app-registro',
@@ -18,7 +19,7 @@ export class RegistroComponent {
   cargando = false;
   error: string | null = null;
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(private auth: AuthService, private router: Router, readonly tema: ThemeService) {}
 
   registrar(): void {
     this.cargando = true;
