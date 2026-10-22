@@ -27,9 +27,9 @@ export interface ResultadoEscaneo {
     color_contenedor: string;
   };
   origen: string;
+  confianza: number;
   puntosOtorgados: number;
   puntosTotales: number;
-  avisoIA: string;
 }
 
 export interface ResultadoWorker {

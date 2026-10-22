@@ -130,7 +130,9 @@
       <p class="resultado__instructions">{{ idioma.categoryInstructions(resultado.categoria.clave, resultado.categoria.instrucciones) }}</p>
       <div class="resultado__footer">
         <p class="puntos">{{ idioma.t('totalScore') }} {{ resultado.puntosTotales }} pts</p>
-        <p class="aviso-ia">{{ idioma.t('iaNotice') }}</p>
+        @if (resultado.origen === 'heuristica') {
+          <p class="aviso-ia">{{ idioma.t('iaNotice') }}</p>
+        }
       </div>
     </section>
   }

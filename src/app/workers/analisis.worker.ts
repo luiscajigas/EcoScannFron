@@ -7,11 +7,9 @@
  *
  * 1. La REDIMENSIONA y COMPRIME (para no subir fotos de varios MB al
  *    backend).
- * 2. Calcula una CLASIFICACIÓN HEURÍSTICA simple por color dominante.
- *    Esto NO es IA real -es un reemplazo temporal y declarado como tal-
- *    para tener una beta funcional de principio a fin. El punto exacto
- *    donde se conectará un modelo de visión real está marcado en el
- *    backend (TODO fase IA).
+ * 2. Calcula una clasificación heurística simple por color dominante, que
+ *    el backend usa solo como respaldo si la IA (Gemini) no está disponible.
+ *    La foto comprimida viaja al backend, que es quien consulta la IA.
  */
 
 interface MensajeEntrada {
@@ -26,7 +24,7 @@ interface ResultadoAnalisis {
   imagenComprimidaBase64: string;
 }
 
-const LADO_MAXIMO = 480;
+const LADO_MAXIMO = 768;
 
 function clasificarPorColor(r: number, g: number, b: number): { clave: string; confianza: number } {
   const brillo = (r + g + b) / 3;

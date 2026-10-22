@@ -87,9 +87,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const { categoriaClave, confianza, anchoPx, altoPx } = data.resultado;
+    const { categoriaClave, confianza, anchoPx, altoPx, imagenComprimidaBase64 } = data.resultado;
 
-    this.escaneoService.registrarEscaneo(categoriaClave, confianza, anchoPx, altoPx).subscribe({
+    this.escaneoService.registrarEscaneo(categoriaClave, confianza, anchoPx, altoPx, imagenComprimidaBase64).subscribe({
       next: (respuesta) => {
         this.resultado = respuesta;
         this.procesando = false;

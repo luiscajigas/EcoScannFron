@@ -18,12 +18,19 @@ export class EscaneoService {
     return this.http.get<Escaneo[]>(`${this.apiUrl}/escaneos`);
   }
 
-  registrarEscaneo(categoriaClave: string, confianza: number, anchoPx: number, altoPx: number): Observable<ResultadoEscaneo> {
+  registrarEscaneo(
+    categoriaClave: string,
+    confianza: number,
+    anchoPx: number,
+    altoPx: number,
+    imagenBase64: string
+  ): Observable<ResultadoEscaneo> {
     return this.http.post<ResultadoEscaneo>(`${this.apiUrl}/escaneos`, {
       categoriaClave,
       confianza,
       anchoPx,
-      altoPx
+      altoPx,
+      imagenBase64
     });
   }
 }
