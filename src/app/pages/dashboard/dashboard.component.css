@@ -44,15 +44,14 @@ app-dashboard {
 .brand { gap: 0.7rem; }
 
 .brand__mark {
-  display: grid;
+  display: block;
   width: 44px;
   height: 44px;
-  place-items: center;
+  padding: 4px;
+  object-fit: contain;
   border: 1px solid rgba(165, 230, 110, 0.26);
   border-radius: 15px;
   background: linear-gradient(145deg, rgba(165, 230, 110, 0.18), rgba(130, 214, 192, 0.08));
-  color: var(--accent);
-  font-size: 1.5rem;
 }
 
 .brand h1 { margin: 0; font-size: 1.25rem; letter-spacing: -0.04em; }

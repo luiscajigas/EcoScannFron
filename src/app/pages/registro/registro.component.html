@@ -1,7 +1,7 @@
 <main class="auth">
   <section class="auth__intro">
     <div class="auth__brand">
-      <span class="auth__brand-mark" aria-hidden="true">🌱</span>
+      <img class="auth__brand-mark" src="/logo.png" alt="" aria-hidden="true" />
       <span class="auth__brand-name">EcoScan</span>
       <button class="language-toggle" type="button" (click)="idioma.toggle()" [attr.aria-label]="idioma.t('switchLanguage')">
         {{ idioma.language() === 'es' ? 'EN' : 'ES' }}
