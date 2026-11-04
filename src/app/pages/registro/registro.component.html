@@ -26,27 +26,30 @@
     <h2>{{ idioma.t('registerTitle') }}</h2>
     <p class="subtitulo">{{ idioma.t('registerSubtitle') }}</p>
 
+    <form (ngSubmit)="registrar()">
     <label for="nombre">{{ idioma.t('name') }}</label>
-    <input id="nombre" type="text" autocomplete="name" [(ngModel)]="nombre" [placeholder]="idioma.t('namePlaceholder')" />
+    <input id="nombre" name="nombre" type="text" autocomplete="name" [(ngModel)]="nombre" [placeholder]="idioma.t('namePlaceholder')" />
 
     <label for="email">{{ idioma.t('email') }}</label>
-    <input id="email" type="email" autocomplete="email" [(ngModel)]="email" [placeholder]="idioma.t('emailPlaceholder')" />
+    <input id="email" name="email" type="email" autocomplete="email" [(ngModel)]="email" [placeholder]="idioma.t('emailPlaceholder')" />
 
     <label for="password">{{ idioma.t('password') }}</label>
-    <input id="password" type="password" autocomplete="new-password" [(ngModel)]="password" placeholder="••••••••" aria-describedby="password-ayuda" />
+    <input id="password" name="password" type="password" autocomplete="new-password" [(ngModel)]="password" placeholder="••••••••" aria-describedby="password-ayuda" />
     <p class="subtitulo" id="password-ayuda">{{ idioma.t('passwordHint') }}</p>
 
     @if (error(); as mensaje) {
       <p class="error" role="alert">{{ mensaje }}</p>
     }
 
-    <button type="button" (click)="registrar()" [disabled]="cargando() || !formularioCompleto()">
+    <button type="submit" [disabled]="cargando() || !formularioCompleto()">
       {{ cargando() ? idioma.t('registerLoading') : idioma.t('registerButton') }}
     </button>
 
     @if (cargando()) {
       <p class="subtitulo" role="status">{{ idioma.t('serverWaking') }}</p>
     }
+
+    </form>
 
     <p class="link-registro">{{ idioma.t('hasAccount') }} <a routerLink="/login">{{ idioma.t('signIn') }}</a></p>
   </section>
