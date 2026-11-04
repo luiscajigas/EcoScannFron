@@ -1,0 +1,23 @@
+<section class="history">
+  <div class="history__heading">
+    <h2>{{ language.t('activity') }}</h2>
+    <span class="history__count">{{ scans().length }} {{ scans().length === 1 ? language.t('scanOne') : language.t('scanMany') }}</span>
+  </div>
+  @if (isLoading()) {
+    <p class="empty-state">{{ language.t('loadingHistory') }}</p>
+  } @else if (scans().length) {
+    <ul>
+      @for (scan of scans(); track scan.id) {
+        <li>
+          <span class="history__name">
+            <span class="chip-dot chip-dot--{{ scan.binColor }}" aria-hidden="true"></span>
+            <span class="chip">{{ language.categoryName(scan.categoryKey) }}</span>
+          </span>
+          <span class="history__points">+{{ scan.pointsAwarded }} pts</span>
+        </li>
+      }
+    </ul>
+  } @else {
+    <p class="empty-state">{{ language.t('noScans') }}</p>
+  }
+</section>
