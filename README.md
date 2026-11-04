@@ -25,7 +25,7 @@ La app queda en `http://localhost:4200`.
 | `npm run build` | Compilación de producción en `dist/frontend/browser` |
 | `npm test` | Pruebas unitarias; necesitan Chrome, o Edge indicando su ruta en `CHROME_BIN` |
 | `npm run test:ci` | Ejecuta las pruebas una sola vez, sin ventana del navegador |
-| `npm run contrato:tipos` | Regenera los tipos desde el contrato; necesita `ecoScannBack` en la carpeta vecina |
+| `npm run contract:types` | Regenera los tipos desde el contrato; necesita `ecoScannBack` en la carpeta vecina |
 
 ## Estructura
 
