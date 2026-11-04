@@ -58,7 +58,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.cargandoHistorial = false;
-        this.error = this.idioma.apiError(err.error?.error, 'scanLoadError');
+        this.error = this.idioma.httpError(err, 'scanLoadError');
       }
     });
   }
