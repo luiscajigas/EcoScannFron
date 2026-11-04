@@ -7,16 +7,19 @@ export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   {
     path: 'login',
+    title: 'Iniciar sesión | EcoScan',
     canActivate: [invitadoGuard],
     loadComponent: () => import('./pages/login/login.component').then((m) => m.LoginComponent)
   },
   {
     path: 'registro',
+    title: 'Crear cuenta | EcoScan',
     canActivate: [invitadoGuard],
     loadComponent: () => import('./pages/registro/registro.component').then((m) => m.RegistroComponent)
   },
   {
     path: 'dashboard',
+    title: 'Mi espacio | EcoScan',
     canActivate: [authGuard],
     loadComponent: () => import('./pages/dashboard/dashboard.component').then((m) => m.DashboardComponent)
   },
