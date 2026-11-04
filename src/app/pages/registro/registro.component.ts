@@ -29,15 +29,17 @@ export class RegistroComponent {
   readonly error = signal<string | null>(null);
 
   readonly formularioCompleto = computed(
-    () => !!this.nombre() && !!this.email() && this.password().length >= LARGO_MINIMO_PASSWORD
+    () => !!this.nombre().trim() && !!this.email().trim() && this.password().length >= LARGO_MINIMO_PASSWORD
   );
 
   registrar(): void {
+    if (this.cargando() || !this.formularioCompleto()) return;
+
     this.cargando.set(true);
     this.error.set(null);
 
     this.auth
-      .registro({ nombre: this.nombre(), email: this.email(), password: this.password() })
+      .registro({ nombre: this.nombre().trim(), email: this.email().trim(), password: this.password() })
       .pipe(finalize(() => this.cargando.set(false)))
       .subscribe({
         next: () => this.router.navigate(['/dashboard']),
