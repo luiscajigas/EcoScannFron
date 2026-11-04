@@ -13,7 +13,7 @@ export class AppComponent implements OnInit {
   private readonly http = inject(HttpClient);
 
   ngOnInit(): void {
-    // El plan gratis de Render se duerme: este aviso lo despierta antes del login.
-    this.http.get(`${environment.apiUrl}/salud`).subscribe({ error: () => undefined });
+    // Render's free plan goes to sleep: this request wakes it up before the login.
+    this.http.get(`${environment.apiUrl}/health`).subscribe({ error: () => undefined });
   }
 }
