@@ -31,7 +31,7 @@
     <input id="nombre" name="nombre" type="text" autocomplete="name" [(ngModel)]="nombre" [placeholder]="idioma.t('namePlaceholder')" />
 
     <label for="email">{{ idioma.t('email') }}</label>
-    <input id="email" name="email" type="email" autocomplete="email" [(ngModel)]="email" [placeholder]="idioma.t('emailPlaceholder')" />
+    <input id="email" name="email" type="email" autocapitalize="off" spellcheck="false" autocomplete="email" [(ngModel)]="email" [placeholder]="idioma.t('emailPlaceholder')" />
 
     <label for="password">{{ idioma.t('password') }}</label>
     <input id="password" name="password" type="password" autocomplete="new-password" [(ngModel)]="password" placeholder="••••••••" aria-describedby="password-ayuda" />
