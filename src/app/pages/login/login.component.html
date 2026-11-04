@@ -37,7 +37,7 @@
       <p class="error" role="alert">{{ mensaje }}</p>
     }
 
-    <button type="submit" [disabled]="cargando() || !email() || !password()">
+    <button type="submit" [attr.aria-busy]="cargando()" [disabled]="cargando() || !email() || !password()">
       {{ cargando() ? idioma.t('loginLoading') : idioma.t('loginButton') }}
     </button>
 
