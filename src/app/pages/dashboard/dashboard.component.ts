@@ -11,6 +11,8 @@ import { ResultadoAnalisis } from '../../workers/analisis.mensajes';
 import { HistorialEscaneosComponent } from './historial-escaneos.component';
 import { ResultadoEscaneoComponent } from './resultado-escaneo.component';
 
+const TAMANO_MAXIMO_BYTES = 25 * 1024 * 1024;
+
 @Component({
   selector: 'app-dashboard',
   imports: [HistorialEscaneosComponent, ResultadoEscaneoComponent],
@@ -110,6 +112,7 @@ export class DashboardComponent implements OnInit {
   /** Algunos sistemas no informan el tipo de ciertas fotos: en ese caso decide el Worker. */
   private validarArchivo(archivo: File): string | null {
     if (archivo.type && !archivo.type.startsWith('image/')) return this.idioma.t('imageNotSupported');
+    if (archivo.size > TAMANO_MAXIMO_BYTES) return this.idioma.t('imageTooHeavy');
     return null;
   }
 
