@@ -3,6 +3,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { RespuestaAuth, SolicitudLogin, SolicitudRegistro, Usuario } from '../models/models';
+import { almacenamiento } from './almacenamiento';
 
 const CLAVE_TOKEN = 'ecoscan_token';
 const CLAVE_USUARIO = 'ecoscan_usuario';
@@ -10,7 +11,7 @@ const CLAVE_USUARIO = 'ecoscan_usuario';
 /** Un dato guardado dañado no debe impedir que la app arranque. */
 function leerUsuarioGuardado(): Usuario | null {
   try {
-    return JSON.parse(localStorage.getItem(CLAVE_USUARIO) ?? 'null');
+    return JSON.parse(almacenamiento.leer(CLAVE_USUARIO) ?? 'null');
   } catch {
     return null;
   }
@@ -21,6 +22,7 @@ export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = environment.apiUrl;
   private readonly usuarioActual = signal<Usuario | null>(leerUsuarioGuardado());
+  private tokenActual = almacenamiento.leer(CLAVE_TOKEN);
 
   readonly usuario = this.usuarioActual.asReadonly();
 
@@ -37,13 +39,14 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem(CLAVE_TOKEN);
-    localStorage.removeItem(CLAVE_USUARIO);
+    almacenamiento.borrar(CLAVE_TOKEN);
+    almacenamiento.borrar(CLAVE_USUARIO);
+    this.tokenActual = null;
     this.usuarioActual.set(null);
   }
 
   get token(): string | null {
-    return localStorage.getItem(CLAVE_TOKEN);
+    return this.tokenActual;
   }
 
   get estaAutenticado(): boolean {
@@ -56,12 +59,13 @@ export class AuthService {
   }
 
   private guardarSesion({ token, usuario }: RespuestaAuth): void {
-    localStorage.setItem(CLAVE_TOKEN, token);
+    almacenamiento.guardar(CLAVE_TOKEN, token);
+    this.tokenActual = token;
     this.guardarUsuario(usuario);
   }
 
   private guardarUsuario(usuario: Usuario): void {
-    localStorage.setItem(CLAVE_USUARIO, JSON.stringify(usuario));
+    almacenamiento.guardar(CLAVE_USUARIO, JSON.stringify(usuario));
     this.usuarioActual.set(usuario);
   }
 }
