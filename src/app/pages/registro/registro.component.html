@@ -43,6 +43,10 @@
       {{ cargando ? idioma.t('registerLoading') : idioma.t('registerButton') }}
     </button>
 
+    @if (cargando) {
+      <p class="subtitulo" role="status">{{ idioma.t('serverWaking') }}</p>
+    }
+
     <p class="link-registro">{{ idioma.t('hasAccount') }} <a routerLink="/login">{{ idioma.t('signIn') }}</a></p>
   </section>
 </main>
