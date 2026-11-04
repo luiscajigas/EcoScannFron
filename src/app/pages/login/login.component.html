@@ -26,23 +26,26 @@
     <h2>{{ idioma.t('loginTitle') }}</h2>
     <p class="subtitulo">{{ idioma.t('loginSubtitle') }}</p>
 
+    <form (ngSubmit)="ingresar()">
     <label for="email">{{ idioma.t('email') }}</label>
-    <input id="email" type="email" autocomplete="email" [(ngModel)]="email" [placeholder]="idioma.t('emailPlaceholder')" />
+    <input id="email" name="email" type="email" autocomplete="email" [(ngModel)]="email" [placeholder]="idioma.t('emailPlaceholder')" />
 
     <label for="password">{{ idioma.t('password') }}</label>
-    <input id="password" type="password" autocomplete="current-password" [(ngModel)]="password" placeholder="••••••••" />
+    <input id="password" name="password" type="password" autocomplete="current-password" [(ngModel)]="password" placeholder="••••••••" />
 
     @if (error(); as mensaje) {
       <p class="error" role="alert">{{ mensaje }}</p>
     }
 
-    <button type="button" (click)="ingresar()" [disabled]="cargando() || !email() || !password()">
+    <button type="submit" [disabled]="cargando() || !email() || !password()">
       {{ cargando() ? idioma.t('loginLoading') : idioma.t('loginButton') }}
     </button>
 
     @if (cargando()) {
       <p class="subtitulo" role="status">{{ idioma.t('serverWaking') }}</p>
     }
+
+    </form>
 
     <p class="link-registro">{{ idioma.t('noAccount') }} <a routerLink="/registro">{{ idioma.t('createHere') }}</a></p>
 
