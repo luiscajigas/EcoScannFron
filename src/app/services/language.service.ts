@@ -86,6 +86,7 @@ const es = {
   loadingHistory: 'Cargando tu historial…',
   noScans: 'Aún no hay escaneos. ¡El primero puede ser hoy!',
   scanLoadError: 'No se pudo cargar tu historial.',
+  serverUnavailable: 'El servidor no está disponible en este momento. Intenta de nuevo en unos minutos.',
   categoryOrganic: 'Orgánico / compostable',
   categoryOrganicInstructions: 'Va en el contenedor verde. Restos de comida, cáscaras, residuos de jardín.',
   categoryPaper: 'Papel y cartón',
@@ -206,6 +207,7 @@ const en: Record<TranslationKey, string> = {
   loadingHistory: 'Loading your history…',
   noScans: 'No scans yet. Your first one can be today!',
   scanLoadError: 'Could not load your history.',
+  serverUnavailable: 'The server is not available right now. Please try again in a few minutes.',
   categoryOrganic: 'Organic / compostable',
   categoryOrganicInstructions: 'Put it in the green bin. Food scraps, peels, and garden waste.',
   categoryPaper: 'Paper and cardboard',
@@ -313,6 +315,11 @@ export class LanguageService {
       return this.t(apiErrors[message]);
     }
     return typeof message === 'string' && message ? message : this.t(fallback);
+  }
+
+  httpError(err: { status?: number; name?: string; error?: { error?: unknown } }, fallback: TranslationKey): string {
+    const sinServidor = err.name === 'TimeoutError' || [0, 502, 503, 504].includes(err.status ?? -1);
+    return sinServidor ? this.t('serverUnavailable') : this.apiError(err.error?.error, fallback);
   }
 
   private applyLanguage(): void {
