@@ -60,7 +60,6 @@ button, input { font: inherit; }
 
 .auth__card {
   position: relative;
-  left: clamp(-300px, -70vw, -90px);
   width: 100%;
   padding: clamp(1.5rem, 4vw, 2.25rem);
   border: 1px solid rgba(184, 215, 194, 0.14);
@@ -112,9 +111,13 @@ button, input { font: inherit; }
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Acerca la tarjeta al texto solo donde hay espacio: en pantallas menores taparía el título. */
+@media (min-width: 1800px) {
+  .auth__card { left: -300px; }
+}
+
 @media (max-width: 760px) {
   .auth { grid-template-columns: minmax(0, 440px); gap: 1.5rem; align-content: center; padding: 2rem 1.1rem; }
-  .auth__card { left: 0; }
   .auth__intro { display: grid; grid-template-columns: 1fr; }
   .auth__brand { margin-bottom: 1.1rem; }
   .auth__intro h1 { max-width: 500px; font-size: clamp(2.25rem, 11vw, 3.25rem); }
