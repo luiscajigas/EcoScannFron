@@ -1,17 +1,16 @@
-import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { RouterOutlet } from '@angular/router';
 import { environment } from '../environments/environment';
 
 @Component({
-    selector: 'app-root',
-    imports: [RouterOutlet],
-    template: '<router-outlet></router-outlet>',
-    changeDetection: ChangeDetectionStrategy.Eager,
-    styles: []
+  selector: 'app-root',
+  imports: [RouterOutlet],
+  template: '<router-outlet></router-outlet>',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent implements OnInit {
-  constructor(private http: HttpClient) {}
+  private readonly http = inject(HttpClient);
 
   ngOnInit(): void {
     // El plan gratis de Render se duerme: este aviso lo despierta antes del login.
