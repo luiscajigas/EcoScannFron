@@ -3,51 +3,51 @@
     <div class="auth__brand">
       <img class="auth__brand-mark" src="/logo.png" width="48" height="48" alt="" aria-hidden="true" />
       <span class="auth__brand-name">EcoScan</span>
-      <button class="language-toggle" type="button" (click)="idioma.toggle()" [attr.aria-label]="idioma.t('switchLanguage')">
-        {{ idioma.language() === 'es' ? 'EN' : 'ES' }}
+      <button class="language-toggle" type="button" (click)="language.toggle()" [attr.aria-label]="language.t('switchLanguage')">
+        {{ language.current() === 'es' ? 'EN' : 'ES' }}
       </button>
-      <button class="theme-toggle" type="button" (click)="tema.alternar()" [attr.aria-label]="tema.modoClaro() ? idioma.t('themeDarkAria') : idioma.t('themeLightAria')">
-        <span aria-hidden="true">{{ tema.modoClaro() ? '☾' : '☀' }}</span>
-        {{ tema.modoClaro() ? idioma.t('themeDark') : idioma.t('themeLight') }}
+      <button class="theme-toggle" type="button" (click)="theme.toggle()" [attr.aria-label]="theme.isLight() ? language.t('themeDarkAria') : language.t('themeLightAria')">
+        <span aria-hidden="true">{{ theme.isLight() ? '☾' : '☀' }}</span>
+        {{ theme.isLight() ? language.t('themeDark') : language.t('themeLight') }}
       </button>
     </div>
-    <p class="auth__eyebrow">{{ idioma.t('loginEyebrow') }}</p>
-    <h1>{{ idioma.t('loginHeadline') }}</h1>
-    <p class="auth__intro-copy">{{ idioma.t('loginIntro') }}</p>
+    <p class="auth__eyebrow">{{ language.t('loginEyebrow') }}</p>
+    <h1>{{ language.t('loginHeadline') }}</h1>
+    <p class="auth__intro-copy">{{ language.t('loginIntro') }}</p>
     <ul class="auth__steps">
-      <li><span class="auth__step-icon" aria-hidden="true">⌕</span><span>{{ idioma.t('loginStepScan') }}</span></li>
-      <li><span class="auth__step-icon" aria-hidden="true">♻</span><span>{{ idioma.t('loginStepLearn') }}</span></li>
-      <li><span class="auth__step-icon" aria-hidden="true">✦</span><span>{{ idioma.t('loginStepPoints') }}</span></li>
+      <li><span class="auth__step-icon" aria-hidden="true">⌕</span><span>{{ language.t('loginStepScan') }}</span></li>
+      <li><span class="auth__step-icon" aria-hidden="true">♻</span><span>{{ language.t('loginStepLearn') }}</span></li>
+      <li><span class="auth__step-icon" aria-hidden="true">✦</span><span>{{ language.t('loginStepPoints') }}</span></li>
     </ul>
   </section>
 
   <section class="auth__card">
-    <p class="auth__eyebrow">{{ idioma.t('loginWelcome') }}</p>
-    <h2>{{ idioma.t('loginTitle') }}</h2>
-    <p class="subtitulo">{{ idioma.t('loginSubtitle') }}</p>
+    <p class="auth__eyebrow">{{ language.t('loginWelcome') }}</p>
+    <h2>{{ language.t('loginTitle') }}</h2>
+    <p class="subtitle">{{ language.t('loginSubtitle') }}</p>
 
-    <form (ngSubmit)="ingresar()">
-    <label for="email">{{ idioma.t('email') }}</label>
-    <input id="email" name="email" type="email" autocapitalize="off" spellcheck="false" autocomplete="email" [(ngModel)]="email" [placeholder]="idioma.t('emailPlaceholder')" />
+    <form (ngSubmit)="submit()">
+    <label for="email">{{ language.t('email') }}</label>
+    <input id="email" name="email" type="email" autocapitalize="off" spellcheck="false" autocomplete="email" [(ngModel)]="email" [placeholder]="language.t('emailPlaceholder')" />
 
-    <label for="password">{{ idioma.t('password') }}</label>
+    <label for="password">{{ language.t('password') }}</label>
     <input id="password" name="password" type="password" autocomplete="current-password" [(ngModel)]="password" placeholder="••••••••" />
 
-    @if (error(); as mensaje) {
-      <p class="error" role="alert">{{ mensaje }}</p>
+    @if (error(); as message) {
+      <p class="error" role="alert">{{ message }}</p>
     }
 
-    <button type="submit" [attr.aria-busy]="cargando()" [disabled]="cargando() || !email() || !password()">
-      {{ cargando() ? idioma.t('loginLoading') : idioma.t('loginButton') }}
+    <button type="submit" [attr.aria-busy]="isLoading()" [disabled]="isLoading() || !email() || !password()">
+      {{ isLoading() ? language.t('loginLoading') : language.t('loginButton') }}
     </button>
 
-    @if (cargando()) {
-      <p class="subtitulo" role="status">{{ idioma.t('serverWaking') }}</p>
+    @if (isLoading()) {
+      <p class="subtitle" role="status">{{ language.t('serverWaking') }}</p>
     }
 
     </form>
 
-    <p class="link-registro">{{ idioma.t('noAccount') }} <a routerLink="/registro">{{ idioma.t('createHere') }}</a></p>
+    <p class="auth-link">{{ language.t('noAccount') }} <a routerLink="/register">{{ language.t('createHere') }}</a></p>
 
   </section>
 </main>

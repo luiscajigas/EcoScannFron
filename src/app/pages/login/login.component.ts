@@ -16,27 +16,27 @@ import { ThemeService } from '../../services/theme.service';
 export class LoginComponent {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
-  readonly tema = inject(ThemeService);
-  readonly idioma = inject(LanguageService);
+  readonly theme = inject(ThemeService);
+  readonly language = inject(LanguageService);
 
   readonly email = signal('');
   readonly password = signal('');
-  readonly cargando = signal(false);
+  readonly isLoading = signal(false);
   readonly error = signal<string | null>(null);
 
-  ingresar(): void {
+  submit(): void {
     const email = this.email().trim();
-    if (this.cargando() || !email || !this.password()) return;
+    if (this.isLoading() || !email || !this.password()) return;
 
-    this.cargando.set(true);
+    this.isLoading.set(true);
     this.error.set(null);
 
     this.auth
-      .login({ email, password: this.password() })
-      .pipe(finalize(() => this.cargando.set(false)))
+      .logIn({ email, password: this.password() })
+      .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: () => this.router.navigate(['/dashboard']),
-        error: (err) => this.error.set(this.idioma.errorHttp(err, 'loginError'))
+        error: (err) => this.error.set(this.language.httpError(err, 'loginError'))
       });
   }
 }
