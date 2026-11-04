@@ -1,0 +1,19 @@
+<section class="resultado" aria-live="polite">
+  <div class="resultado__top">
+    <div>
+      <p class="eyebrow">{{ idioma.t('resultEyebrow') }}</p>
+      <h2>{{ idioma.categoryName(resultado().categoria.clave) }}</h2>
+      <p class="contenedor contenedor--{{ resultado().categoria.color_contenedor }}">
+        {{ idioma.t('container') }} {{ idioma.containerName(resultado().categoria.color_contenedor) }}
+      </p>
+    </div>
+    <span class="resultado__tag">{{ idioma.t('goodJob') }} +{{ resultado().puntosOtorgados }} pts</span>
+  </div>
+  <p class="resultado__instructions">{{ idioma.categoryInstructions(resultado().categoria.clave) }}</p>
+  <div class="resultado__footer">
+    <p class="puntos">{{ idioma.t('totalScore') }} {{ resultado().puntosTotales }} pts</p>
+    @if (resultado().origen === 'heuristica') {
+      <p class="aviso-ia">{{ idioma.t('iaNotice') }}</p>
+    }
+  </div>
+</section>
