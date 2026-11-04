@@ -3,6 +3,7 @@ import { Injectable, signal } from '@angular/core';
 import { TimeoutError } from 'rxjs';
 import { en, es, TranslationKey } from '../i18n/traducciones';
 import { CategoriaClave, CodigoError, ColorContenedor, ErrorApi } from '../models/models';
+import { almacenamiento } from './almacenamiento';
 
 const CLAVE_IDIOMA = 'ecoscan_idioma';
 const ESTADOS_SIN_SERVIDOR = [0, 502, 503, 504];
@@ -43,7 +44,7 @@ export class LanguageService {
   readonly language = signal<'es' | 'en'>('es');
 
   constructor() {
-    if (typeof localStorage !== 'undefined' && localStorage.getItem(CLAVE_IDIOMA) === 'en') {
+    if (almacenamiento.leer(CLAVE_IDIOMA) === 'en') {
       this.language.set('en');
     }
     this.applyLanguage();
@@ -55,9 +56,7 @@ export class LanguageService {
 
   toggle(): void {
     this.language.update((language) => (language === 'es' ? 'en' : 'es'));
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem(CLAVE_IDIOMA, this.language());
-    }
+    almacenamiento.guardar(CLAVE_IDIOMA, this.language());
     this.applyLanguage();
   }
 
