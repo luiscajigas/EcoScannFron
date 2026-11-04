@@ -41,7 +41,7 @@
       <p class="error" role="alert">{{ mensaje }}</p>
     }
 
-    <button type="submit" [disabled]="cargando() || !formularioCompleto()">
+    <button type="submit" [attr.aria-busy]="cargando()" [disabled]="cargando() || !formularioCompleto()">
       {{ cargando() ? idioma.t('registerLoading') : idioma.t('registerButton') }}
     </button>
 
