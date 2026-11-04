@@ -269,7 +269,6 @@ app-dashboard {
 .chip-dot--azul { background: var(--blue); }
 .chip-dot--blanco { background: #e0e9e2; }
 .chip-dot--negro { background: #708078; }
-.muted { color: var(--muted); }
 .empty-state { padding: 1rem 0 0.2rem; color: var(--muted); font-size: 0.82rem; }
 
 @keyframes rise-in {
