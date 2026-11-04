@@ -98,7 +98,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.procesando = false;
-        this.error = this.idioma.apiError(err.error?.error, 'saveScanError');
+        this.error = this.idioma.httpError(err, 'saveScanError');
       }
     });
   }
