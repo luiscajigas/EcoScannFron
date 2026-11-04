@@ -4,22 +4,22 @@ import { TestBed } from '@angular/core/testing';
 import { Router, UrlTree, provideRouter } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { authGuard } from '../guards/auth.guard';
-import { RespuestaAuth } from '../models/models';
+import { AuthResponse } from '../models/models';
 import { authInterceptor } from './auth.interceptor';
 import { AuthService } from './auth.service';
 
 const API = environment.apiUrl;
-const RESPUESTA: RespuestaAuth = {
-  token: 'token-de-prueba',
-  usuario: { id: 1, nombre: 'Ana', email: 'ana@ejemplo.com', puntos: 10 }
+const RESPONSE: AuthResponse = {
+  token: 'test-token',
+  user: { id: 1, name: 'Ana', email: 'ana@example.com', points: 10 }
 };
 
-describe('autenticación en el cliente', () => {
+describe('client authentication', () => {
   let auth: AuthService;
   let http: HttpClient;
   let backend: HttpTestingController;
 
-  function configurar(): void {
+  function setUp(): void {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
@@ -32,9 +32,9 @@ describe('autenticación en el cliente', () => {
     backend = TestBed.inject(HttpTestingController);
   }
 
-  function iniciarSesion(): void {
-    auth.login({ email: 'ana@ejemplo.com', password: 'secreto123' }).subscribe();
-    backend.expectOne(`${API}/auth/login`).flush(RESPUESTA);
+  function logIn(): void {
+    auth.logIn({ email: 'ana@example.com', password: 'secret123' }).subscribe();
+    backend.expectOne(`${API}/auth/login`).flush(RESPONSE);
   }
 
   beforeEach(() => localStorage.clear());
@@ -43,84 +43,84 @@ describe('autenticación en el cliente', () => {
     localStorage.clear();
   });
 
-  it('el login guarda el token y actualiza el usuario', () => {
-    configurar();
-    iniciarSesion();
+  it('login saves the token and updates the user', () => {
+    setUp();
+    logIn();
 
-    expect(auth.token).toBe('token-de-prueba');
-    expect(auth.estaAutenticado).toBeTrue();
-    expect(auth.usuario()?.nombre).toBe('Ana');
+    expect(auth.token).toBe('test-token');
+    expect(auth.isAuthenticated).toBeTrue();
+    expect(auth.user()?.name).toBe('Ana');
   });
 
-  it('actualizarPuntos cambia el usuario y lo persiste', () => {
-    configurar();
-    iniciarSesion();
-    auth.actualizarPuntos(25);
+  it('updatePoints changes the user and persists it', () => {
+    setUp();
+    logIn();
+    auth.updatePoints(25);
 
-    expect(auth.usuario()?.puntos).toBe(25);
-    expect(JSON.parse(localStorage.getItem('ecoscan_usuario')!).puntos).toBe(25);
+    expect(auth.user()?.points).toBe(25);
+    expect(JSON.parse(localStorage.getItem('ecoscan_user')!).points).toBe(25);
   });
 
-  it('logout borra la sesión', () => {
-    configurar();
-    iniciarSesion();
-    auth.logout();
+  it('logOut clears the session', () => {
+    setUp();
+    logIn();
+    auth.logOut();
 
-    expect(auth.estaAutenticado).toBeFalse();
-    expect(auth.usuario()).toBeNull();
+    expect(auth.isAuthenticated).toBeFalse();
+    expect(auth.user()).toBeNull();
   });
 
-  it('un usuario guardado dañado no impide arrancar', () => {
-    localStorage.setItem('ecoscan_usuario', '{dañado');
-    configurar();
-    expect(auth.usuario()).toBeNull();
+  it('a corrupted stored user does not stop the app from starting', () => {
+    localStorage.setItem('ecoscan_user', '{corrupted');
+    setUp();
+    expect(auth.user()).toBeNull();
   });
 
-  it('el interceptor agrega el token solo a nuestra API', () => {
-    configurar();
-    iniciarSesion();
+  it('the interceptor adds the token only to our API', () => {
+    setUp();
+    logIn();
 
-    http.get(`${API}/escaneos`).subscribe();
-    const propia = backend.expectOne(`${API}/escaneos`);
-    expect(propia.request.headers.get('Authorization')).toBe('Bearer token-de-prueba');
-    propia.flush([]);
+    http.get(`${API}/scans`).subscribe();
+    const own = backend.expectOne(`${API}/scans`);
+    expect(own.request.headers.get('Authorization')).toBe('Bearer test-token');
+    own.flush([]);
 
-    http.get('https://otro-sitio.example.com/datos').subscribe();
-    const ajena = backend.expectOne('https://otro-sitio.example.com/datos');
-    expect(ajena.request.headers.has('Authorization')).toBeFalse();
-    ajena.flush({});
+    http.get('https://other-site.example.com/data').subscribe();
+    const external = backend.expectOne('https://other-site.example.com/data');
+    expect(external.request.headers.has('Authorization')).toBeFalse();
+    external.flush({});
   });
 
-  it('un 401 con sesión la cierra y lleva al login', () => {
-    configurar();
-    const navegar = spyOn(TestBed.inject(Router), 'navigate');
-    iniciarSesion();
+  it('a 401 with a session closes it and goes to the login', () => {
+    setUp();
+    const navigate = spyOn(TestBed.inject(Router), 'navigate');
+    logIn();
 
-    http.get(`${API}/escaneos`).subscribe({ error: () => undefined });
-    backend.expectOne(`${API}/escaneos`).flush({ error: 'x', codigo: 'TOKEN_INVALIDO' }, { status: 401, statusText: 'Unauthorized' });
+    http.get(`${API}/scans`).subscribe({ error: () => undefined });
+    backend.expectOne(`${API}/scans`).flush({ error: 'x', code: 'INVALID_TOKEN' }, { status: 401, statusText: 'Unauthorized' });
 
-    expect(auth.estaAutenticado).toBeFalse();
-    expect(navegar).toHaveBeenCalledWith(['/login']);
+    expect(auth.isAuthenticated).toBeFalse();
+    expect(navigate).toHaveBeenCalledWith(['/login']);
   });
 
-  it('otros errores no cierran la sesión', () => {
-    configurar();
-    iniciarSesion();
+  it('other errors do not close the session', () => {
+    setUp();
+    logIn();
 
-    http.get(`${API}/escaneos`).subscribe({ error: () => undefined });
-    backend.expectOne(`${API}/escaneos`).flush({}, { status: 500, statusText: 'Error' });
+    http.get(`${API}/scans`).subscribe({ error: () => undefined });
+    backend.expectOne(`${API}/scans`).flush({}, { status: 500, statusText: 'Error' });
 
-    expect(auth.estaAutenticado).toBeTrue();
+    expect(auth.isAuthenticated).toBeTrue();
   });
 
-  it('el guard deja pasar con sesión y redirige sin ella', () => {
-    configurar();
-    const ejecutar = () => TestBed.runInInjectionContext(() => authGuard({} as never, {} as never));
+  it('the guard lets users with a session through and redirects those without one', () => {
+    setUp();
+    const run = () => TestBed.runInInjectionContext(() => authGuard({} as never, {} as never));
 
-    const sinSesion = ejecutar() as UrlTree;
-    expect(sinSesion.toString()).toBe('/login');
+    const withoutSession = run() as UrlTree;
+    expect(withoutSession.toString()).toBe('/login');
 
-    iniciarSesion();
-    expect(ejecutar()).toBeTrue();
+    logIn();
+    expect(run()).toBeTrue();
   });
 });
