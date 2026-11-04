@@ -47,6 +47,12 @@ export class DashboardComponent implements OnInit {
     input.value = ''; // sin esto, volver a elegir la misma foto no dispara el evento
     if (!archivo) return;
 
+    const problema = this.validarArchivo(archivo);
+    if (problema) {
+      this.error.set(problema);
+      return;
+    }
+
     this.error.set(null);
     this.resultado.set(null);
     this.procesando.set(true);
@@ -99,6 +105,12 @@ export class DashboardComponent implements OnInit {
           this.error.set(this.idioma.errorHttp(err, 'saveScanError'));
         }
       });
+  }
+
+  /** Algunos sistemas no informan el tipo de ciertas fotos: en ese caso decide el Worker. */
+  private validarArchivo(archivo: File): string | null {
+    if (archivo.type && !archivo.type.startsWith('image/')) return this.idioma.t('imageNotSupported');
+    return null;
   }
 
   private mensajeErrorAnalisis(err: unknown): string {
