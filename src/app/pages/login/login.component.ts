@@ -1,43 +1,39 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
-import { ThemeService } from '../../services/theme.service';
 import { LanguageService } from '../../services/language.service';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
-    selector: 'app-login',
-    imports: [FormsModule, RouterLink],
-    templateUrl: './login.component.html',
-    changeDetection: ChangeDetectionStrategy.Eager,
-    styleUrl: './login.component.css'
+  selector: 'app-login',
+  imports: [FormsModule, RouterLink],
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginComponent {
-  email = '';
-  password = '';
-  cargando = false;
-  error: string | null = null;
+  private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
+  readonly tema = inject(ThemeService);
+  readonly idioma = inject(LanguageService);
 
-  constructor(
-    private auth: AuthService,
-    private router: Router,
-    readonly tema: ThemeService,
-    readonly idioma: LanguageService
-  ) {}
+  readonly email = signal('');
+  readonly password = signal('');
+  readonly cargando = signal(false);
+  readonly error = signal<string | null>(null);
 
   ingresar(): void {
-    this.cargando = true;
-    this.error = null;
-    this.auth.login(this.email, this.password).subscribe({
-      next: () => {
-        this.cargando = false;
-        this.router.navigate(['/dashboard']);
-      },
-      error: (err) => {
-        this.cargando = false;
-        this.error = this.idioma.httpError(err, 'loginError');
-      }
-    });
+    this.cargando.set(true);
+    this.error.set(null);
+
+    this.auth
+      .login({ email: this.email(), password: this.password() })
+      .pipe(finalize(() => this.cargando.set(false)))
+      .subscribe({
+        next: () => this.router.navigate(['/dashboard']),
+        error: (err) => this.error.set(this.idioma.errorHttp(err, 'loginError'))
+      });
   }
 }

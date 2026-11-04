@@ -32,15 +32,15 @@
     <label for="password">{{ idioma.t('password') }}</label>
     <input id="password" type="password" autocomplete="current-password" [(ngModel)]="password" placeholder="••••••••" />
 
-    @if (error) {
-      <p class="error" role="alert">{{ error }}</p>
+    @if (error(); as mensaje) {
+      <p class="error" role="alert">{{ mensaje }}</p>
     }
 
-    <button type="button" (click)="ingresar()" [disabled]="cargando || !email || !password">
-      {{ cargando ? idioma.t('loginLoading') : idioma.t('loginButton') }}
+    <button type="button" (click)="ingresar()" [disabled]="cargando() || !email() || !password()">
+      {{ cargando() ? idioma.t('loginLoading') : idioma.t('loginButton') }}
     </button>
 
-    @if (cargando) {
+    @if (cargando()) {
       <p class="subtitulo" role="status">{{ idioma.t('serverWaking') }}</p>
     }
 
