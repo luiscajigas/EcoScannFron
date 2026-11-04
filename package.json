@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "contrato:tipos": "cd ../ecoScannBack && npx openapi-typescript contrato/openapi.yaml -o ../EcoScannFron/src/app/api/contrato.ts"
   },
   "private": true,
   "engines": {
