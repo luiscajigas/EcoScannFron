@@ -2,16 +2,16 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { RespuestaAuth, SolicitudLogin, SolicitudRegistro, Usuario } from '../models/models';
-import { almacenamiento } from './almacenamiento';
+import { AuthResponse, LoginRequest, RegisterRequest, User } from '../models/models';
+import { safeStorage } from './storage';
 
-const CLAVE_TOKEN = 'ecoscan_token';
-const CLAVE_USUARIO = 'ecoscan_usuario';
+const TOKEN_KEY = 'ecoscan_token';
+const USER_KEY = 'ecoscan_user';
 
-/** Un dato guardado dañado no debe impedir que la app arranque. */
-function leerUsuarioGuardado(): Usuario | null {
+/** Corrupted stored data must not stop the app from starting. */
+function readStoredUser(): User | null {
   try {
-    return JSON.parse(almacenamiento.leer(CLAVE_USUARIO) ?? 'null');
+    return JSON.parse(safeStorage.read(USER_KEY) ?? 'null');
   } catch {
     return null;
   }
@@ -21,51 +21,51 @@ function leerUsuarioGuardado(): Usuario | null {
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = environment.apiUrl;
-  private readonly usuarioActual = signal<Usuario | null>(leerUsuarioGuardado());
-  private tokenActual = almacenamiento.leer(CLAVE_TOKEN);
+  private readonly currentUser = signal<User | null>(readStoredUser());
+  private currentToken = safeStorage.read(TOKEN_KEY);
 
-  readonly usuario = this.usuarioActual.asReadonly();
+  readonly user = this.currentUser.asReadonly();
 
-  registro(solicitud: SolicitudRegistro): Observable<RespuestaAuth> {
+  register(request: RegisterRequest): Observable<AuthResponse> {
     return this.http
-      .post<RespuestaAuth>(`${this.apiUrl}/auth/registro`, solicitud)
-      .pipe(tap((respuesta) => this.guardarSesion(respuesta)));
+      .post<AuthResponse>(`${this.apiUrl}/auth/register`, request)
+      .pipe(tap((response) => this.saveSession(response)));
   }
 
-  login(solicitud: SolicitudLogin): Observable<RespuestaAuth> {
+  logIn(request: LoginRequest): Observable<AuthResponse> {
     return this.http
-      .post<RespuestaAuth>(`${this.apiUrl}/auth/login`, solicitud)
-      .pipe(tap((respuesta) => this.guardarSesion(respuesta)));
+      .post<AuthResponse>(`${this.apiUrl}/auth/login`, request)
+      .pipe(tap((response) => this.saveSession(response)));
   }
 
-  logout(): void {
-    almacenamiento.borrar(CLAVE_TOKEN);
-    almacenamiento.borrar(CLAVE_USUARIO);
-    this.tokenActual = null;
-    this.usuarioActual.set(null);
+  logOut(): void {
+    safeStorage.remove(TOKEN_KEY);
+    safeStorage.remove(USER_KEY);
+    this.currentToken = null;
+    this.currentUser.set(null);
   }
 
   get token(): string | null {
-    return this.tokenActual;
+    return this.currentToken;
   }
 
-  get estaAutenticado(): boolean {
+  get isAuthenticated(): boolean {
     return !!this.token;
   }
 
-  actualizarPuntos(puntos: number): void {
-    const usuario = this.usuarioActual();
-    if (usuario) this.guardarUsuario({ ...usuario, puntos });
+  updatePoints(points: number): void {
+    const user = this.currentUser();
+    if (user) this.saveUser({ ...user, points });
   }
 
-  private guardarSesion({ token, usuario }: RespuestaAuth): void {
-    almacenamiento.guardar(CLAVE_TOKEN, token);
-    this.tokenActual = token;
-    this.guardarUsuario(usuario);
+  private saveSession({ token, user }: AuthResponse): void {
+    safeStorage.write(TOKEN_KEY, token);
+    this.currentToken = token;
+    this.saveUser(user);
   }
 
-  private guardarUsuario(usuario: Usuario): void {
-    almacenamiento.guardar(CLAVE_USUARIO, JSON.stringify(usuario));
-    this.usuarioActual.set(usuario);
+  private saveUser(user: User): void {
+    safeStorage.write(USER_KEY, JSON.stringify(user));
+    this.currentUser.set(user);
   }
 }
