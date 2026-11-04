@@ -28,7 +28,7 @@
 
     <form (ngSubmit)="ingresar()">
     <label for="email">{{ idioma.t('email') }}</label>
-    <input id="email" name="email" type="email" autocomplete="email" [(ngModel)]="email" [placeholder]="idioma.t('emailPlaceholder')" />
+    <input id="email" name="email" type="email" autocapitalize="off" spellcheck="false" autocomplete="email" [(ngModel)]="email" [placeholder]="idioma.t('emailPlaceholder')" />
 
     <label for="password">{{ idioma.t('password') }}</label>
     <input id="password" name="password" type="password" autocomplete="current-password" [(ngModel)]="password" placeholder="••••••••" />
