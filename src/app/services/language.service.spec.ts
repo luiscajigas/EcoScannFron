@@ -1,51 +1,51 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { TimeoutError } from 'rxjs';
-import { en, es } from '../i18n/traducciones';
+import { en, es } from '../i18n/translations';
 import { LanguageService } from './language.service';
 
 describe('LanguageService', () => {
-  let idioma: LanguageService;
+  let language: LanguageService;
 
-  const errorConCodigo = (status: number, codigo?: string) =>
-    new HttpErrorResponse({ status, error: codigo ? { error: 'x', codigo } : null });
+  const errorWithCode = (status: number, code?: string) =>
+    new HttpErrorResponse({ status, error: code ? { error: 'x', code } : null });
 
   beforeEach(() => {
     localStorage.clear();
-    idioma = TestBed.inject(LanguageService);
+    language = TestBed.inject(LanguageService);
   });
   afterEach(() => localStorage.clear());
 
-  it('los dos idiomas tienen las mismas claves', () => {
+  it('both languages have the same keys', () => {
     expect(Object.keys(en).sort()).toEqual(Object.keys(es).sort());
   });
 
-  it('cambia de idioma y lo recuerda', () => {
-    expect(idioma.t('signOut')).toBe(es.signOut);
-    idioma.toggle();
-    expect(idioma.t('signOut')).toBe(en.signOut);
-    expect(localStorage.getItem('ecoscan_idioma')).toBe('en');
+  it('switches language and remembers it', () => {
+    expect(language.t('signOut')).toBe(es.signOut);
+    language.toggle();
+    expect(language.t('signOut')).toBe(en.signOut);
+    expect(localStorage.getItem('ecoscan_language')).toBe('en');
     expect(document.documentElement.lang).toBe('en');
-    idioma.toggle();
+    language.toggle();
   });
 
-  it('traduce los errores a partir del código de la API', () => {
-    expect(idioma.errorHttp(errorConCodigo(401, 'CREDENCIALES_INVALIDAS'), 'loginError')).toBe(es.apiInvalidCredentials);
-    idioma.toggle();
-    expect(idioma.errorHttp(errorConCodigo(401, 'CREDENCIALES_INVALIDAS'), 'loginError')).toBe(en.apiInvalidCredentials);
-    idioma.toggle();
+  it('translates errors from the API code', () => {
+    expect(language.httpError(errorWithCode(401, 'INVALID_CREDENTIALS'), 'loginError')).toBe(es.apiInvalidCredentials);
+    language.toggle();
+    expect(language.httpError(errorWithCode(401, 'INVALID_CREDENTIALS'), 'loginError')).toBe(en.apiInvalidCredentials);
+    language.toggle();
   });
 
-  it('usa el mensaje de respaldo si no hay código o es desconocido', () => {
-    expect(idioma.errorHttp(errorConCodigo(500), 'loginError')).toBe(es.loginError);
-    expect(idioma.errorHttp(errorConCodigo(500, 'CODIGO_NUEVO'), 'loginError')).toBe(es.loginError);
-    expect(idioma.errorHttp(new Error('otra cosa'), 'loginError')).toBe(es.loginError);
+  it('uses the fallback message if the code is missing or unknown', () => {
+    expect(language.httpError(errorWithCode(500), 'loginError')).toBe(es.loginError);
+    expect(language.httpError(errorWithCode(500, 'NEW_CODE'), 'loginError')).toBe(es.loginError);
+    expect(language.httpError(new Error('something else'), 'loginError')).toBe(es.loginError);
   });
 
-  it('avisa que el servidor no está disponible', () => {
+  it('warns that the server is unavailable', () => {
     for (const status of [0, 502, 503, 504]) {
-      expect(idioma.errorHttp(errorConCodigo(status), 'loginError')).toBe(es.serverUnavailable);
+      expect(language.httpError(errorWithCode(status), 'loginError')).toBe(es.serverUnavailable);
     }
-    expect(idioma.errorHttp(new TimeoutError(), 'loginError')).toBe(es.serverUnavailable);
+    expect(language.httpError(new TimeoutError(), 'loginError')).toBe(es.serverUnavailable);
   });
 });
