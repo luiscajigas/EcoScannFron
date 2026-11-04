@@ -1,49 +1,45 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { inject, Injectable, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
-
-interface Usuario {
-  id: number;
-  nombre: string;
-  email: string;
-  puntos: number;
-}
-
-interface RespuestaAuth {
-  token: string;
-  usuario: Usuario;
-}
+import { RespuestaAuth, SolicitudLogin, SolicitudRegistro, Usuario } from '../models/models';
 
 const CLAVE_TOKEN = 'ecoscan_token';
 const CLAVE_USUARIO = 'ecoscan_usuario';
 
+/** Un dato guardado dañado no debe impedir que la app arranque. */
+function leerUsuarioGuardado(): Usuario | null {
+  try {
+    return JSON.parse(localStorage.getItem(CLAVE_USUARIO) ?? 'null');
+  } catch {
+    return null;
+  }
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  private readonly http = inject(HttpClient);
   private readonly apiUrl = environment.apiUrl;
+  private readonly usuarioActual = signal<Usuario | null>(leerUsuarioGuardado());
 
-  constructor(private http: HttpClient) {}
+  readonly usuario = this.usuarioActual.asReadonly();
 
-  registro(nombre: string, email: string, password: string): Observable<RespuestaAuth> {
+  registro(solicitud: SolicitudRegistro): Observable<RespuestaAuth> {
     return this.http
-      .post<RespuestaAuth>(`${this.apiUrl}/auth/registro`, { nombre, email, password })
-      .pipe(tap((r) => this.guardarSesion(r)));
+      .post<RespuestaAuth>(`${this.apiUrl}/auth/registro`, solicitud)
+      .pipe(tap((respuesta) => this.guardarSesion(respuesta)));
   }
 
-  login(email: string, password: string): Observable<RespuestaAuth> {
+  login(solicitud: SolicitudLogin): Observable<RespuestaAuth> {
     return this.http
-      .post<RespuestaAuth>(`${this.apiUrl}/auth/login`, { email, password })
-      .pipe(tap((r) => this.guardarSesion(r)));
+      .post<RespuestaAuth>(`${this.apiUrl}/auth/login`, solicitud)
+      .pipe(tap((respuesta) => this.guardarSesion(respuesta)));
   }
 
   logout(): void {
     localStorage.removeItem(CLAVE_TOKEN);
     localStorage.removeItem(CLAVE_USUARIO);
-  }
-
-  private guardarSesion(r: RespuestaAuth): void {
-    localStorage.setItem(CLAVE_TOKEN, r.token);
-    localStorage.setItem(CLAVE_USUARIO, JSON.stringify(r.usuario));
+    this.usuarioActual.set(null);
   }
 
   get token(): string | null {
@@ -54,16 +50,18 @@ export class AuthService {
     return !!this.token;
   }
 
-  get usuarioActual(): Usuario | null {
-    const raw = localStorage.getItem(CLAVE_USUARIO);
-    return raw ? JSON.parse(raw) : null;
+  actualizarPuntos(puntos: number): void {
+    const usuario = this.usuarioActual();
+    if (usuario) this.guardarUsuario({ ...usuario, puntos });
   }
 
-  actualizarPuntosLocal(puntos: number): void {
-    const usuario = this.usuarioActual;
-    if (usuario) {
-      usuario.puntos = puntos;
-      localStorage.setItem(CLAVE_USUARIO, JSON.stringify(usuario));
-    }
+  private guardarSesion({ token, usuario }: RespuestaAuth): void {
+    localStorage.setItem(CLAVE_TOKEN, token);
+    this.guardarUsuario(usuario);
+  }
+
+  private guardarUsuario(usuario: Usuario): void {
+    localStorage.setItem(CLAVE_USUARIO, JSON.stringify(usuario));
+    this.usuarioActual.set(usuario);
   }
 }
