@@ -1,0 +1,56 @@
+<main class="auth">
+  <section class="auth__intro">
+    <div class="auth__brand">
+      <img class="auth__brand-mark" src="/logo.png" width="48" height="48" alt="" aria-hidden="true" />
+      <span class="auth__brand-name">EcoScan</span>
+      <button class="language-toggle" type="button" (click)="language.toggle()" [attr.aria-label]="language.t('switchLanguage')">
+        {{ language.current() === 'es' ? 'EN' : 'ES' }}
+      </button>
+      <button class="theme-toggle" type="button" (click)="theme.toggle()" [attr.aria-label]="theme.isLight() ? language.t('themeDarkAria') : language.t('themeLightAria')">
+        <span aria-hidden="true">{{ theme.isLight() ? '☾' : '☀' }}</span>
+        {{ theme.isLight() ? language.t('themeDark') : language.t('themeLight') }}
+      </button>
+    </div>
+    <p class="auth__eyebrow">{{ language.t('registerEyebrow') }}</p>
+    <h1>{{ language.t('registerHeadline') }}</h1>
+    <p class="auth__intro-copy">{{ language.t('registerIntro') }}</p>
+    <ul class="auth__steps">
+      <li><span class="auth__step-icon" aria-hidden="true">01</span><span>{{ language.t('registerStepAccount') }}</span></li>
+      <li><span class="auth__step-icon" aria-hidden="true">02</span><span>{{ language.t('registerStepScan') }}</span></li>
+      <li><span class="auth__step-icon" aria-hidden="true">03</span><span>{{ language.t('registerStepLearn') }}</span></li>
+    </ul>
+  </section>
+
+  <section class="auth__card">
+    <p class="auth__eyebrow">{{ language.t('registerToday') }}</p>
+    <h2>{{ language.t('registerTitle') }}</h2>
+    <p class="subtitle">{{ language.t('registerSubtitle') }}</p>
+
+    <form (ngSubmit)="submit()">
+    <label for="name">{{ language.t('name') }}</label>
+    <input id="name" name="name" type="text" autocomplete="name" [(ngModel)]="name" [placeholder]="language.t('namePlaceholder')" />
+
+    <label for="email">{{ language.t('email') }}</label>
+    <input id="email" name="email" type="email" autocapitalize="off" spellcheck="false" autocomplete="email" [(ngModel)]="email" [placeholder]="language.t('emailPlaceholder')" />
+
+    <label for="password">{{ language.t('password') }}</label>
+    <input id="password" name="password" type="password" autocomplete="new-password" [(ngModel)]="password" placeholder="••••••••" aria-describedby="password-help" />
+    <p class="subtitle" id="password-help">{{ language.t('passwordHint') }}</p>
+
+    @if (error(); as message) {
+      <p class="error" role="alert">{{ message }}</p>
+    }
+
+    <button type="submit" [attr.aria-busy]="isLoading()" [disabled]="isLoading() || !isFormComplete()">
+      {{ isLoading() ? language.t('registerLoading') : language.t('registerButton') }}
+    </button>
+
+    @if (isLoading()) {
+      <p class="subtitle" role="status">{{ language.t('serverWaking') }}</p>
+    }
+
+    </form>
+
+    <p class="auth-link">{{ language.t('hasAccount') }} <a routerLink="/login">{{ language.t('signIn') }}</a></p>
+  </section>
+</main>
