@@ -1,106 +1,64 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
-
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
+import { Escaneo, ResultadoEscaneo } from '../../models/models';
+import { AnalisisImagenService, ErrorAnalisis } from '../../services/analisis-imagen.service';
 import { AuthService } from '../../services/auth.service';
 import { EscaneoService } from '../../services/escaneo.service';
-import { ThemeService } from '../../services/theme.service';
 import { LanguageService } from '../../services/language.service';
-import { Escaneo, ResultadoEscaneo } from '../../models/models';
+import { ThemeService } from '../../services/theme.service';
+import { ResultadoAnalisis } from '../../workers/analisis.mensajes';
+import { HistorialEscaneosComponent } from './historial-escaneos.component';
+import { ResultadoEscaneoComponent } from './resultado-escaneo.component';
 
 @Component({
-    selector: 'app-dashboard',
-    imports: [],
-    templateUrl: './dashboard.component.html',
-    changeDetection: ChangeDetectionStrategy.Eager
+  selector: 'app-dashboard',
+  imports: [HistorialEscaneosComponent, ResultadoEscaneoComponent],
+  // Se provee aquí para que el Worker viva lo mismo que esta página.
+  providers: [AnalisisImagenService],
+  templateUrl: './dashboard.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DashboardComponent implements OnInit, OnDestroy {
-  @ViewChild('inputArchivo') inputArchivo!: ElementRef<HTMLInputElement>;
+export class DashboardComponent implements OnInit {
+  private readonly auth = inject(AuthService);
+  private readonly escaneos = inject(EscaneoService);
+  private readonly analisis = inject(AnalisisImagenService);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
+  readonly tema = inject(ThemeService);
+  readonly idioma = inject(LanguageService);
 
-  historial: Escaneo[] = [];
-  cargandoHistorial = true;
-
-  procesando = false;
-  previsualizacion: string | null = null;
-  resultado: ResultadoEscaneo | null = null;
-  error: string | null = null;
-
-  private worker: Worker | null = null;
-
-  constructor(
-    private auth: AuthService,
-    private escaneoService: EscaneoService,
-    private router: Router,
-    readonly tema: ThemeService,
-    readonly idioma: LanguageService
-  ) {}
+  readonly usuario = this.auth.usuario;
+  readonly historial = signal<Escaneo[]>([]);
+  readonly cargandoHistorial = signal(true);
+  readonly procesando = signal(false);
+  readonly previsualizacion = signal<string | null>(null);
+  readonly resultado = signal<ResultadoEscaneo | null>(null);
+  readonly error = signal<string | null>(null);
 
   ngOnInit(): void {
-    if (typeof Worker !== 'undefined') {
-      this.worker = new Worker(new URL('../../workers/analisis.worker', import.meta.url));
-      this.worker.onmessage = ({ data }) => this.manejarResultadoWorker(data);
-    } else {
-      this.error = this.idioma.t('workerError');
-    }
-
+    this.destroyRef.onDestroy(() => this.liberarPrevisualizacion());
     this.cargarHistorial();
   }
 
-  ngOnDestroy(): void {
-    this.worker?.terminate();
-  }
-
-  cargarHistorial(): void {
-    this.cargandoHistorial = true;
-    this.escaneoService.historial().subscribe({
-      next: (lista) => {
-        this.historial = lista;
-        this.cargandoHistorial = false;
-      },
-      error: (err) => {
-        this.cargandoHistorial = false;
-        this.error = this.idioma.httpError(err, 'scanLoadError');
-      }
-    });
-  }
-
-  abrirSelectorArchivo(): void {
-    this.inputArchivo.nativeElement.click();
-  }
-
-  onArchivoSeleccionado(event: Event): void {
+  async onArchivoSeleccionado(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
     const archivo = input.files?.[0];
-    if (!archivo || !this.worker) return;
+    input.value = ''; // sin esto, volver a elegir la misma foto no dispara el evento
+    if (!archivo) return;
 
-    this.error = null;
-    this.resultado = null;
-    this.procesando = true;
-    this.previsualizacion = URL.createObjectURL(archivo);
+    this.error.set(null);
+    this.resultado.set(null);
+    this.procesando.set(true);
+    this.liberarPrevisualizacion();
+    this.previsualizacion.set(URL.createObjectURL(archivo));
 
-    this.worker.postMessage({ archivo });
-  }
-
-  private manejarResultadoWorker(data: any): void {
-    if (!data.ok) {
-      this.procesando = false;
-      this.error = `${this.idioma.t('imageError')} ${data.error}`;
-      return;
+    try {
+      this.registrar(await this.analisis.analizar(archivo));
+    } catch (err) {
+      this.procesando.set(false);
+      this.error.set(this.mensajeErrorAnalisis(err));
     }
-
-    const { categoriaClave, confianza, anchoPx, altoPx, imagenComprimidaBase64 } = data.resultado;
-
-    this.escaneoService.registrarEscaneo(categoriaClave, confianza, anchoPx, altoPx, imagenComprimidaBase64).subscribe({
-      next: (respuesta) => {
-        this.resultado = respuesta;
-        this.procesando = false;
-        this.auth.actualizarPuntosLocal(respuesta.puntosTotales);
-        this.cargarHistorial();
-      },
-      error: (err) => {
-        this.procesando = false;
-        this.error = this.idioma.httpError(err, 'saveScanError');
-      }
-    });
   }
 
   salir(): void {
@@ -108,7 +66,59 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.router.navigate(['/login']);
   }
 
-  get usuario() {
-    return this.auth.usuarioActual;
+  private cargarHistorial(): void {
+    this.cargandoHistorial.set(true);
+    this.escaneos
+      .historial()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (lista) => {
+          this.historial.set(lista);
+          this.cargandoHistorial.set(false);
+        },
+        error: (err) => {
+          this.cargandoHistorial.set(false);
+          this.error.set(this.idioma.errorHttp(err, 'scanLoadError'));
+        }
+      });
+  }
+
+  private registrar({ categoriaClave, confianza, anchoPx, altoPx, imagenComprimidaBase64 }: ResultadoAnalisis): void {
+    this.escaneos
+      .registrarEscaneo({ categoriaClave, confianza, anchoPx, altoPx, imagenBase64: imagenComprimidaBase64 })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (respuesta) => {
+          this.resultado.set(respuesta);
+          this.procesando.set(false);
+          this.auth.actualizarPuntos(respuesta.puntosTotales);
+          this.cargarHistorial();
+        },
+        error: (err) => {
+          this.procesando.set(false);
+          this.error.set(this.idioma.errorHttp(err, 'saveScanError'));
+        }
+      });
+  }
+
+  private mensajeErrorAnalisis(err: unknown): string {
+    if (!(err instanceof ErrorAnalisis)) return this.idioma.t('imageError');
+
+    switch (err.motivo) {
+      case 'sin-soporte':
+        return this.idioma.t('workerError');
+      case 'tiempo-agotado':
+        return this.idioma.t('imageTimeout');
+      case 'worker-caido':
+        return this.idioma.t('imageError');
+      case 'imagen-invalida':
+        return `${this.idioma.t('imageError')} ${err.message}`;
+    }
+  }
+
+  /** Las URL de objeto retienen la imagen en memoria hasta que se revocan. */
+  private liberarPrevisualizacion(): void {
+    const url = this.previsualizacion();
+    if (url) URL.revokeObjectURL(url);
   }
 }

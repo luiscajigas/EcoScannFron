@@ -15,10 +15,10 @@
         <span aria-hidden="true">{{ tema.modoClaro() ? '☾' : '☀' }}</span>
         {{ tema.modoClaro() ? idioma.t('themeDark') : idioma.t('themeLight') }}
       </button>
-      @if (usuario) {
+      @if (usuario(); as cuenta) {
         <div class="user-pill">
-          <span class="user-pill__initial">{{ usuario.nombre.charAt(0).toUpperCase() }}</span>
-          <span>{{ idioma.t('greeting') }} <strong>{{ usuario.nombre }}</strong></span>
+          <span class="user-pill__initial">{{ cuenta.nombre.charAt(0).toUpperCase() }}</span>
+          <span>{{ idioma.t('greeting') }} <strong>{{ cuenta.nombre }}</strong></span>
         </div>
       }
       <button class="link" type="button" (click)="salir()">{{ idioma.t('signOut') }}</button>
@@ -31,12 +31,12 @@
       <h2>{{ idioma.t('dashboardHeadline') }}</h2>
       <p class="welcome__copy">{{ idioma.t('dashboardIntro') }}</p>
     </div>
-    @if (usuario) {
+    @if (usuario(); as cuenta) {
       <div class="score-card">
         <span class="score-card__icon" aria-hidden="true">✦</span>
         <div>
           <span class="score-card__label">{{ idioma.t('yourPoints') }}</span>
-          <strong>{{ usuario.puntos }} pts</strong>
+          <strong>{{ cuenta.puntos }} pts</strong>
         </div>
       </div>
     }
@@ -61,14 +61,14 @@
       <button
         class="captura__zona"
         type="button"
-        [disabled]="procesando"
-        [attr.aria-label]="previsualizacion ? idioma.t('chooseAnotherPhoto') : idioma.t('takeOrUploadPhoto')"
-        (click)="abrirSelectorArchivo()"
+        [disabled]="procesando()"
+        [attr.aria-label]="previsualizacion() ? idioma.t('chooseAnotherPhoto') : idioma.t('takeOrUploadPhoto')"
+        (click)="inputArchivo.click()"
       >
-        @if (previsualizacion) {
-          <img [src]="previsualizacion" alt="Vista previa del residuo seleccionado" />
+        @if (previsualizacion(); as vistaPrevia) {
+          <img [src]="vistaPrevia" [alt]="idioma.t('previewAlt')" />
           <span class="captura__overlay">
-            <strong>{{ procesando ? idioma.t('analyzePhoto') : idioma.t('chooseAnother') }}</strong>
+            <strong>{{ procesando() ? idioma.t('analyzePhoto') : idioma.t('chooseAnother') }}</strong>
             <span>{{ idioma.t('photoTip') }}</span>
           </span>
         } @else {
@@ -85,11 +85,11 @@
         }
       </button>
 
-      @if (procesando) {
+      @if (procesando()) {
         <p class="procesando" role="status">{{ idioma.t('processing') }}</p>
       }
-      @if (error) {
-        <p class="error" role="alert">{{ error }}</p>
+      @if (error(); as mensaje) {
+        <p class="error" role="alert">{{ mensaje }}</p>
       }
     </section>
 
@@ -115,51 +115,9 @@
     </aside>
   </div>
 
-  @if (resultado) {
-    <section class="resultado" aria-live="polite">
-      <div class="resultado__top">
-        <div>
-          <p class="eyebrow">{{ idioma.t('resultEyebrow') }}</p>
-          <h2>{{ idioma.categoryName(resultado.categoria.clave, resultado.categoria.nombre) }}</h2>
-          <p class="contenedor contenedor--{{ resultado.categoria.color_contenedor }}">
-            {{ idioma.t('container') }} {{ idioma.containerName(resultado.categoria.color_contenedor) }}
-          </p>
-        </div>
-        <span class="resultado__tag">{{ idioma.t('goodJob') }} +{{ resultado.puntosOtorgados }} pts</span>
-      </div>
-      <p class="resultado__instructions">{{ idioma.categoryInstructions(resultado.categoria.clave, resultado.categoria.instrucciones) }}</p>
-      <div class="resultado__footer">
-        <p class="puntos">{{ idioma.t('totalScore') }} {{ resultado.puntosTotales }} pts</p>
-        @if (resultado.origen === 'heuristica') {
-          <p class="aviso-ia">{{ idioma.t('iaNotice') }}</p>
-        }
-      </div>
-    </section>
+  @if (resultado(); as ultimo) {
+    <app-resultado-escaneo [resultado]="ultimo" />
   }
 
-  <section class="historial">
-    <div class="historial__heading">
-      <h2>{{ idioma.t('activity') }}</h2>
-      <span class="historial__count">{{ historial.length }} {{ historial.length === 1 ? idioma.t('scanOne') : idioma.t('scanMany') }}</span>
-    </div>
-    @if (cargandoHistorial) {
-      <p class="empty-state">{{ idioma.t('loadingHistory') }}</p>
-    }
-    @if (!cargandoHistorial && historial.length) {
-      <ul>
-        @for (e of historial; track e.id) {
-          <li>
-            <span class="historial__name">
-              <span class="chip-dot chip-dot--{{ e.color_contenedor }}" aria-hidden="true"></span>
-              <span class="chip">{{ idioma.categoryName(e.categoria_clave, e.categoria_nombre) }}</span>
-            </span>
-            <span class="historial__points">+{{ e.puntos_otorgados }} pts</span>
-          </li>
-        }
-      </ul>
-    }
-    @if (!cargandoHistorial && !historial.length) {
-      <p class="empty-state">{{ idioma.t('noScans') }}</p>
-    }
-  </section>
+  <app-historial-escaneos [escaneos]="historial()" [cargando]="cargandoHistorial()" />
 </main>
