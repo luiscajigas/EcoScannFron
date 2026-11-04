@@ -70,7 +70,7 @@ button, input { font: inherit; }
 }
 
 .auth__card h2 { margin: 0; font-size: 1.8rem; letter-spacing: -0.055em; }
-.auth__card .subtitulo { margin: 0.55rem 0 1.4rem; color: #91a398; font-size: 0.88rem; line-height: 1.55; }
+.auth__card .subtitle { margin: 0.55rem 0 1.4rem; color: #91a398; font-size: 0.88rem; line-height: 1.55; }
 .auth__card label { display: block; margin: 1rem 0 0.45rem; color: #b8c7bd; font-size: 0.78rem; font-weight: 600; }
 .auth__card input {
   display: block;
@@ -102,8 +102,8 @@ button, input { font: inherit; }
 .auth__card button:disabled { cursor: not-allowed; opacity: 0.5; }
 .auth__card button:focus-visible, .auth__card a:focus-visible { outline: 2px solid #c5f78f; outline-offset: 3px; }
 .auth__card .error { margin: 0.8rem 0 0; color: #ffaaaa; font-size: 0.82rem; }
-.auth__card .link-registro { margin: 1.1rem 0 0; color: #91a398; font-size: 0.82rem; text-align: center; }
-.auth__card .link-registro a { color: #82d6c0; text-underline-offset: 3px; }
+.auth__card .auth-link { margin: 1.1rem 0 0; color: #91a398; font-size: 0.82rem; text-align: center; }
+.auth__card .auth-link a { color: #82d6c0; text-underline-offset: 3px; }
 .auth__brand .theme-toggle { color: #c6d2c9; }
 
 @keyframes auth-enter {
@@ -111,7 +111,7 @@ button, input { font: inherit; }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Acerca la tarjeta al texto solo donde hay espacio: en pantallas menores taparía el título. */
+/* Moves the card closer to the text only where it fits: on smaller screens it would cover the title. */
 @media (min-width: 1800px) {
   .auth__card { left: -300px; }
 }
@@ -137,7 +137,7 @@ button, input { font: inherit; }
 }
 
 :root[data-theme='light'] app-login,
-:root[data-theme='light'] app-registro {
+:root[data-theme='light'] app-register {
   background:
     radial-gradient(ellipse at 12% 0%, rgba(117, 166, 92, 0.13), transparent 35rem),
     #f3f7f1;
@@ -151,14 +151,14 @@ button, input { font: inherit; }
 :root[data-theme='light'] .auth__steps li { color: #586b5e; }
 :root[data-theme='light'] .auth__step-icon { border-color: rgba(70, 119, 54, 0.18); background: rgba(110, 163, 79, 0.08); color: #4e822f; }
 :root[data-theme='light'] .auth__card { border-color: #d9e4d9; background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(246, 250, 245, 0.98)); box-shadow: 0 28px 80px rgba(37, 67, 42, 0.1); }
-:root[data-theme='light'] .auth__card .subtitulo { color: #6d7d71; }
+:root[data-theme='light'] .auth__card .subtitle { color: #6d7d71; }
 :root[data-theme='light'] .auth__card label { color: #526357; }
 :root[data-theme='light'] .auth__card input { border-color: #d5e0d5; background: #f7faf6; color: #17251d; }
 :root[data-theme='light'] .auth__card input::placeholder { color: #8a9a8e; }
 :root[data-theme='light'] .auth__card input:focus { border-color: #6eaa4d; box-shadow: 0 0 0 3px rgba(110, 170, 77, 0.14); }
 :root[data-theme='light'] .auth__card button { background: linear-gradient(100deg, #94d45e, #74c99a); }
-:root[data-theme='light'] .auth__card .link-registro { color: #6d7d71; }
-:root[data-theme='light'] .auth__card .link-registro a { color: #287d70; }
+:root[data-theme='light'] .auth__card .auth-link { color: #6d7d71; }
+:root[data-theme='light'] .auth__card .auth-link a { color: #287d70; }
 :root[data-theme='light'] .auth__brand .theme-toggle,
 :root[data-theme='light'] .auth__brand .language-toggle { border-color: #d5e0d5; background: rgba(255, 255, 255, 0.55); color: #405347; }
 :root[data-theme='light'] .auth__brand .theme-toggle:hover,
