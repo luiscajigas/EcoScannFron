@@ -1,19 +1,19 @@
-import { components } from '../api/contrato';
+import { components } from '../api/contract';
 
 /**
- * Tipos de la API. Todos salen del contrato OpenAPI del backend: no se escriben
- * a mano, para que el compilador avise si la API cambia.
+ * API types. All of them come from the backend's OpenAPI contract and are not
+ * written by hand, so the compiler warns when the API changes.
  */
-type Esquemas = components['schemas'];
+type Schemas = components['schemas'];
 
-export type CategoriaClave = Esquemas['CategoriaClave'];
-export type CodigoError = Esquemas['CodigoError'];
-export type ColorContenedor = Esquemas['ColorContenedor'];
-export type ErrorApi = Esquemas['ErrorApi'];
-export type Escaneo = Esquemas['Escaneo'];
-export type RespuestaAuth = Esquemas['RespuestaAuth'];
-export type ResultadoEscaneo = Esquemas['ResultadoEscaneo'];
-export type SolicitudEscaneo = Esquemas['SolicitudEscaneo'];
-export type SolicitudLogin = Esquemas['SolicitudLogin'];
-export type SolicitudRegistro = Esquemas['SolicitudRegistro'];
-export type Usuario = Esquemas['Usuario'];
+export type ApiError = Schemas['ApiError'];
+export type AuthResponse = Schemas['AuthResponse'];
+export type BinColor = Schemas['BinColor'];
+export type CategoryKey = Schemas['CategoryKey'];
+export type ErrorCode = Schemas['ErrorCode'];
+export type LoginRequest = Schemas['LoginRequest'];
+export type RegisterRequest = Schemas['RegisterRequest'];
+export type Scan = Schemas['Scan'];
+export type ScanRequest = Schemas['ScanRequest'];
+export type ScanResult = Schemas['ScanResult'];
+export type User = Schemas['User'];
