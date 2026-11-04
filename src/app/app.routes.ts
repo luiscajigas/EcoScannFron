@@ -1,21 +1,22 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
-import { invitadoGuard } from './guards/invitado.guard';
+import { guestGuard } from './guards/guest.guard';
 
-// Cada página se descarga cuando se visita: quien entra al login no baja el dashboard.
+// Each page is downloaded when visited: whoever opens the login does not download the dashboard.
+// The titles are shown to users, so they stay in Spanish.
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   {
     path: 'login',
     title: 'Iniciar sesión | EcoScan',
-    canActivate: [invitadoGuard],
+    canActivate: [guestGuard],
     loadComponent: () => import('./pages/login/login.component').then((m) => m.LoginComponent)
   },
   {
-    path: 'registro',
+    path: 'register',
     title: 'Crear cuenta | EcoScan',
-    canActivate: [invitadoGuard],
-    loadComponent: () => import('./pages/registro/registro.component').then((m) => m.RegistroComponent)
+    canActivate: [guestGuard],
+    loadComponent: () => import('./pages/register/register.component').then((m) => m.RegisterComponent)
   },
   {
     path: 'dashboard',
