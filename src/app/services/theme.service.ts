@@ -1,28 +1,28 @@
 import { Injectable, signal } from '@angular/core';
-import { almacenamiento } from './almacenamiento';
+import { safeStorage } from './storage';
 
-const CLAVE_TEMA = 'ecoscan_tema';
+const THEME_KEY = 'ecoscan_theme';
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
-  readonly modoClaro = signal(false);
+  readonly isLight = signal(false);
 
   constructor() {
-    if (almacenamiento.leer(CLAVE_TEMA) === 'claro') {
-      this.modoClaro.set(true);
+    if (safeStorage.read(THEME_KEY) === 'light') {
+      this.isLight.set(true);
     }
-    this.aplicarTema();
+    this.applyTheme();
   }
 
-  alternar(): void {
-    this.modoClaro.update((claro) => !claro);
-    almacenamiento.guardar(CLAVE_TEMA, this.modoClaro() ? 'claro' : 'oscuro');
-    this.aplicarTema();
+  toggle(): void {
+    this.isLight.update((isLight) => !isLight);
+    safeStorage.write(THEME_KEY, this.isLight() ? 'light' : 'dark');
+    this.applyTheme();
   }
 
-  private aplicarTema(): void {
+  private applyTheme(): void {
     if (typeof document !== 'undefined') {
-      document.documentElement.dataset['theme'] = this.modoClaro() ? 'light' : 'dark';
+      document.documentElement.dataset['theme'] = this.isLight() ? 'light' : 'dark';
     }
   }
 }
