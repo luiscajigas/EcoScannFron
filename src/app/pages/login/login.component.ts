@@ -25,11 +25,14 @@ export class LoginComponent {
   readonly error = signal<string | null>(null);
 
   ingresar(): void {
+    const email = this.email().trim();
+    if (this.cargando() || !email || !this.password()) return;
+
     this.cargando.set(true);
     this.error.set(null);
 
     this.auth
-      .login({ email: this.email(), password: this.password() })
+      .login({ email, password: this.password() })
       .pipe(finalize(() => this.cargando.set(false)))
       .subscribe({
         next: () => this.router.navigate(['/dashboard']),
