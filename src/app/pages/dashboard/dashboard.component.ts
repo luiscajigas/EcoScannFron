@@ -1,139 +1,139 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { Escaneo, ResultadoEscaneo } from '../../models/models';
-import { AnalisisImagenService, ErrorAnalisis } from '../../services/analisis-imagen.service';
+import { Scan, ScanResult } from '../../models/models';
 import { AuthService } from '../../services/auth.service';
-import { EscaneoService } from '../../services/escaneo.service';
+import { ImageAnalysisError, ImageAnalysisService } from '../../services/image-analysis.service';
 import { LanguageService } from '../../services/language.service';
+import { ScanService } from '../../services/scan.service';
 import { ThemeService } from '../../services/theme.service';
-import { ResultadoAnalisis } from '../../workers/analisis.mensajes';
-import { HistorialEscaneosComponent } from './historial-escaneos.component';
-import { ResultadoEscaneoComponent } from './resultado-escaneo.component';
+import { AnalysisResult } from '../../workers/analysis.messages';
+import { ScanHistoryComponent } from './scan-history.component';
+import { ScanResultComponent } from './scan-result.component';
 
-const TAMANO_MAXIMO_BYTES = 25 * 1024 * 1024;
+const MAX_FILE_SIZE_BYTES = 25 * 1024 * 1024;
 
 @Component({
   selector: 'app-dashboard',
-  imports: [HistorialEscaneosComponent, ResultadoEscaneoComponent],
-  // Se provee aquí para que el Worker viva lo mismo que esta página.
-  providers: [AnalisisImagenService],
+  imports: [ScanHistoryComponent, ScanResultComponent],
+  // Provided here so the Worker lives as long as this page.
+  providers: [ImageAnalysisService],
   templateUrl: './dashboard.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent implements OnInit {
   private readonly auth = inject(AuthService);
-  private readonly escaneos = inject(EscaneoService);
-  private readonly analisis = inject(AnalisisImagenService);
+  private readonly scans = inject(ScanService);
+  private readonly imageAnalysis = inject(ImageAnalysisService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
-  readonly tema = inject(ThemeService);
-  readonly idioma = inject(LanguageService);
+  readonly theme = inject(ThemeService);
+  readonly language = inject(LanguageService);
 
-  readonly usuario = this.auth.usuario;
-  readonly historial = signal<Escaneo[]>([]);
-  readonly cargandoHistorial = signal(true);
-  readonly procesando = signal(false);
-  readonly previsualizacion = signal<string | null>(null);
-  readonly resultado = signal<ResultadoEscaneo | null>(null);
+  readonly user = this.auth.user;
+  readonly history = signal<Scan[]>([]);
+  readonly isLoadingHistory = signal(true);
+  readonly isProcessing = signal(false);
+  readonly preview = signal<string | null>(null);
+  readonly result = signal<ScanResult | null>(null);
   readonly error = signal<string | null>(null);
 
   ngOnInit(): void {
-    this.destroyRef.onDestroy(() => this.liberarPrevisualizacion());
-    this.cargarHistorial();
+    this.destroyRef.onDestroy(() => this.releasePreview());
+    this.loadHistory();
   }
 
-  async onArchivoSeleccionado(event: Event): Promise<void> {
+  async onFileSelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
-    const archivo = input.files?.[0];
-    input.value = ''; // sin esto, volver a elegir la misma foto no dispara el evento
-    if (!archivo) return;
+    const file = input.files?.[0];
+    input.value = ''; // without this, choosing the same photo again does not fire the event
+    if (!file) return;
 
-    const problema = this.validarArchivo(archivo);
-    if (problema) {
-      this.error.set(problema);
+    const problem = this.validateFile(file);
+    if (problem) {
+      this.error.set(problem);
       return;
     }
 
     this.error.set(null);
-    this.resultado.set(null);
-    this.procesando.set(true);
-    this.liberarPrevisualizacion();
-    this.previsualizacion.set(URL.createObjectURL(archivo));
+    this.result.set(null);
+    this.isProcessing.set(true);
+    this.releasePreview();
+    this.preview.set(URL.createObjectURL(file));
 
     try {
-      this.registrar(await this.analisis.analizar(archivo));
+      this.saveScan(await this.imageAnalysis.analyze(file));
     } catch (err) {
-      this.procesando.set(false);
-      this.error.set(this.mensajeErrorAnalisis(err));
+      this.isProcessing.set(false);
+      this.error.set(this.analysisErrorMessage(err));
     }
   }
 
-  salir(): void {
-    this.auth.logout();
+  logOut(): void {
+    this.auth.logOut();
     this.router.navigate(['/login']);
   }
 
-  private cargarHistorial(): void {
-    this.cargandoHistorial.set(true);
-    this.escaneos
-      .historial()
+  private loadHistory(): void {
+    this.isLoadingHistory.set(true);
+    this.scans
+      .getHistory()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (lista) => {
-          this.historial.set(lista);
-          this.cargandoHistorial.set(false);
+        next: (scans) => {
+          this.history.set(scans);
+          this.isLoadingHistory.set(false);
         },
         error: (err) => {
-          this.cargandoHistorial.set(false);
-          this.error.set(this.idioma.errorHttp(err, 'scanLoadError'));
+          this.isLoadingHistory.set(false);
+          this.error.set(this.language.httpError(err, 'scanLoadError'));
         }
       });
   }
 
-  private registrar({ categoriaClave, confianza, anchoPx, altoPx, imagenComprimidaBase64 }: ResultadoAnalisis): void {
-    this.escaneos
-      .registrarEscaneo({ categoriaClave, confianza, anchoPx, altoPx, imagenBase64: imagenComprimidaBase64 })
+  private saveScan({ categoryKey, confidence, widthPx, heightPx, compressedImageBase64 }: AnalysisResult): void {
+    this.scans
+      .create({ categoryKey, confidence, widthPx, heightPx, imageBase64: compressedImageBase64 })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (respuesta) => {
-          this.resultado.set(respuesta);
-          this.procesando.set(false);
-          this.auth.actualizarPuntos(respuesta.puntosTotales);
-          this.cargarHistorial();
+        next: (response) => {
+          this.result.set(response);
+          this.isProcessing.set(false);
+          this.auth.updatePoints(response.totalPoints);
+          this.loadHistory();
         },
         error: (err) => {
-          this.procesando.set(false);
-          this.error.set(this.idioma.errorHttp(err, 'saveScanError'));
+          this.isProcessing.set(false);
+          this.error.set(this.language.httpError(err, 'saveScanError'));
         }
       });
   }
 
-  /** Algunos sistemas no informan el tipo de ciertas fotos: en ese caso decide el Worker. */
-  private validarArchivo(archivo: File): string | null {
-    if (archivo.type && !archivo.type.startsWith('image/')) return this.idioma.t('imageNotSupported');
-    if (archivo.size > TAMANO_MAXIMO_BYTES) return this.idioma.t('imageTooHeavy');
+  /** Some systems do not report the type of certain photos: in that case the Worker decides. */
+  private validateFile(file: File): string | null {
+    if (file.type && !file.type.startsWith('image/')) return this.language.t('imageNotSupported');
+    if (file.size > MAX_FILE_SIZE_BYTES) return this.language.t('imageTooHeavy');
     return null;
   }
 
-  private mensajeErrorAnalisis(err: unknown): string {
-    if (!(err instanceof ErrorAnalisis)) return this.idioma.t('imageError');
+  private analysisErrorMessage(err: unknown): string {
+    if (!(err instanceof ImageAnalysisError)) return this.language.t('imageError');
 
-    switch (err.motivo) {
-      case 'sin-soporte':
-        return this.idioma.t('workerError');
-      case 'tiempo-agotado':
-        return this.idioma.t('imageTimeout');
-      case 'worker-caido':
-        return this.idioma.t('imageError');
-      case 'imagen-invalida':
-        return `${this.idioma.t('imageError')} ${err.message}`;
+    switch (err.reason) {
+      case 'unsupported':
+        return this.language.t('workerError');
+      case 'timed-out':
+        return this.language.t('imageTimeout');
+      case 'worker-crashed':
+        return this.language.t('imageError');
+      case 'invalid-image':
+        return `${this.language.t('imageError')} ${err.message}`;
     }
   }
 
-  /** Las URL de objeto retienen la imagen en memoria hasta que se revocan. */
-  private liberarPrevisualizacion(): void {
-    const url = this.previsualizacion();
+  /** Object URLs keep the image in memory until they are revoked. */
+  private releasePreview(): void {
+    const url = this.preview();
     if (url) URL.revokeObjectURL(url);
   }
 }

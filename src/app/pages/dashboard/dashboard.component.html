@@ -4,39 +4,39 @@
       <img class="brand__mark" src="/logo.png" width="44" height="44" alt="" aria-hidden="true" />
       <div>
         <h1>EcoScan</h1>
-        <p>{{ idioma.t('dashboardTagline') }}</p>
+        <p>{{ language.t('dashboardTagline') }}</p>
       </div>
     </div>
     <div class="topbar__account">
-      <button class="link language-toggle" type="button" (click)="idioma.toggle()" [attr.aria-label]="idioma.t('switchLanguage')">
-        {{ idioma.language() === 'es' ? 'EN' : 'ES' }}
+      <button class="link language-toggle" type="button" (click)="language.toggle()" [attr.aria-label]="language.t('switchLanguage')">
+        {{ language.current() === 'es' ? 'EN' : 'ES' }}
       </button>
-      <button class="link theme-toggle" type="button" (click)="tema.alternar()" [attr.aria-label]="tema.modoClaro() ? idioma.t('themeDarkAria') : idioma.t('themeLightAria')">
-        <span aria-hidden="true">{{ tema.modoClaro() ? '☾' : '☀' }}</span>
-        {{ tema.modoClaro() ? idioma.t('themeDark') : idioma.t('themeLight') }}
+      <button class="link theme-toggle" type="button" (click)="theme.toggle()" [attr.aria-label]="theme.isLight() ? language.t('themeDarkAria') : language.t('themeLightAria')">
+        <span aria-hidden="true">{{ theme.isLight() ? '☾' : '☀' }}</span>
+        {{ theme.isLight() ? language.t('themeDark') : language.t('themeLight') }}
       </button>
-      @if (usuario(); as cuenta) {
+      @if (user(); as account) {
         <div class="user-pill">
-          <span class="user-pill__initial">{{ cuenta.nombre.charAt(0).toUpperCase() }}</span>
-          <span>{{ idioma.t('greeting') }} <strong>{{ cuenta.nombre }}</strong></span>
+          <span class="user-pill__initial">{{ account.name.charAt(0).toUpperCase() }}</span>
+          <span>{{ language.t('greeting') }} <strong>{{ account.name }}</strong></span>
         </div>
       }
-      <button class="link" type="button" (click)="salir()">{{ idioma.t('signOut') }}</button>
+      <button class="link" type="button" (click)="logOut()">{{ language.t('signOut') }}</button>
     </div>
   </header>
 
   <section class="welcome">
     <div>
-      <p class="eyebrow">{{ idioma.t('dashboardEyebrow') }}</p>
-      <h2>{{ idioma.t('dashboardHeadline') }}</h2>
-      <p class="welcome__copy">{{ idioma.t('dashboardIntro') }}</p>
+      <p class="eyebrow">{{ language.t('dashboardEyebrow') }}</p>
+      <h2>{{ language.t('dashboardHeadline') }}</h2>
+      <p class="welcome__copy">{{ language.t('dashboardIntro') }}</p>
     </div>
-    @if (usuario(); as cuenta) {
+    @if (user(); as account) {
       <div class="score-card">
         <span class="score-card__icon" aria-hidden="true">✦</span>
         <div>
-          <span class="score-card__label">{{ idioma.t('yourPoints') }}</span>
-          <strong>{{ cuenta.puntos }} pts</strong>
+          <span class="score-card__label">{{ language.t('yourPoints') }}</span>
+          <strong>{{ account.points }} pts</strong>
         </div>
       </div>
     }
@@ -45,79 +45,79 @@
   <div class="workspace">
     <section class="scanner-card">
       <div class="section-heading">
-        <h3>{{ idioma.t('scanTitle') }}</h3>
-        <span class="beta-pill">{{ idioma.t('betaClassification') }}</span>
+        <h3>{{ language.t('scanTitle') }}</h3>
+        <span class="beta-pill">{{ language.t('betaClassification') }}</span>
       </div>
 
       <input
-        #inputArchivo
+        #fileInput
         type="file"
         accept="image/*"
         capture="environment"
         hidden
-        (change)="onArchivoSeleccionado($event)"
+        (change)="onFileSelected($event)"
       />
 
       <button
-        class="captura__zona"
+        class="capture__zone"
         type="button"
-        [disabled]="procesando()"
-        [attr.aria-label]="previsualizacion() ? idioma.t('chooseAnotherPhoto') : idioma.t('takeOrUploadPhoto')"
-        (click)="inputArchivo.click()"
+        [disabled]="isProcessing()"
+        [attr.aria-label]="preview() ? language.t('chooseAnotherPhoto') : language.t('takeOrUploadPhoto')"
+        (click)="fileInput.click()"
       >
-        @if (previsualizacion(); as vistaPrevia) {
-          <img [src]="vistaPrevia" [alt]="idioma.t('previewAlt')" />
-          <span class="captura__overlay">
-            <strong>{{ procesando() ? idioma.t('analyzePhoto') : idioma.t('chooseAnother') }}</strong>
-            <span>{{ idioma.t('photoTip') }}</span>
+        @if (preview(); as previewUrl) {
+          <img [src]="previewUrl" [alt]="language.t('previewAlt')" />
+          <span class="capture__overlay">
+            <strong>{{ isProcessing() ? language.t('analyzePhoto') : language.t('chooseAnother') }}</strong>
+            <span>{{ language.t('photoTip') }}</span>
           </span>
         } @else {
-          <span class="captura__placeholder">
+          <span class="capture__placeholder">
             <span class="capture-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M4 7.5h3l1.5-2h7l1.5 2h3a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 20 19.5H4A1.5 1.5 0 0 1 2.5 18V9A1.5 1.5 0 0 1 4 7.5Z"/>
                 <circle cx="12" cy="13" r="3.5"/>
               </svg>
             </span>
-            <strong>{{ idioma.t('firstScan') }}</strong>
-            <span>{{ idioma.t('takeOrChoose') }}</span>
+            <strong>{{ language.t('firstScan') }}</strong>
+            <span>{{ language.t('takeOrChoose') }}</span>
           </span>
         }
       </button>
 
-      @if (procesando()) {
-        <p class="procesando" role="status">{{ idioma.t('processing') }}</p>
+      @if (isProcessing()) {
+        <p class="processing" role="status">{{ language.t('processing') }}</p>
       }
-      @if (error(); as mensaje) {
-        <p class="error" role="alert">{{ mensaje }}</p>
+      @if (error(); as message) {
+        <p class="error" role="alert">{{ message }}</p>
       }
     </section>
 
     <aside class="side-card">
-      <p class="eyebrow">{{ idioma.t('photoEyebrow') }}</p>
-      <h3>{{ idioma.t('threeSteps') }}</h3>
-      <p class="side-card__lead">{{ idioma.t('photoIntro') }}</p>
+      <p class="eyebrow">{{ language.t('photoEyebrow') }}</p>
+      <h3>{{ language.t('threeSteps') }}</h3>
+      <p class="side-card__lead">{{ language.t('photoIntro') }}</p>
       <ol class="steps">
         <li>
           <span class="steps__number">01</span>
-          <div><strong>{{ idioma.t('stepOneTitle') }}</strong><p>{{ idioma.t('stepOneText') }}</p></div>
+          <div><strong>{{ language.t('stepOneTitle') }}</strong><p>{{ language.t('stepOneText') }}</p></div>
         </li>
         <li>
           <span class="steps__number">02</span>
-          <div><strong>{{ idioma.t('stepTwoTitle') }}</strong><p>{{ idioma.t('stepTwoText') }}</p></div>
+          <div><strong>{{ language.t('stepTwoTitle') }}</strong><p>{{ language.t('stepTwoText') }}</p></div>
         </li>
         <li>
           <span class="steps__number">03</span>
-          <div><strong>{{ idioma.t('stepThreeTitle') }}</strong><p>{{ idioma.t('stepThreeText') }}</p></div>
+          <div><strong>{{ language.t('stepThreeTitle') }}</strong><p>{{ language.t('stepThreeText') }}</p></div>
         </li>
       </ol>
-      <div class="tip"><span aria-hidden="true">💡</span><span>{{ idioma.t('photoBackgroundTip') }}</span></div>
+      <div class="tip"><span aria-hidden="true">💡</span><span>{{ language.t('photoBackgroundTip') }}</span></div>
     </aside>
   </div>
 
-  @if (resultado(); as ultimo) {
-    <app-resultado-escaneo [resultado]="ultimo" />
+  @if (result(); as latest) {
+    <app-scan-result [result]="latest" />
   }
 
-  <app-historial-escaneos [escaneos]="historial()" [cargando]="cargandoHistorial()" />
+  <app-scan-history [scans]="history()" [isLoading]="isLoadingHistory()" />
 </main>
