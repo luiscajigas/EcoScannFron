@@ -37,7 +37,7 @@ export class RegistroComponent {
       },
       error: (err) => {
         this.cargando = false;
-        this.error = this.idioma.apiError(err.error?.error, 'registerError');
+        this.error = this.idioma.httpError(err, 'registerError');
       }
     });
   }
