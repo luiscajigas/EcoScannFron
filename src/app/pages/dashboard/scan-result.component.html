@@ -1,0 +1,19 @@
+<section class="result" aria-live="polite">
+  <div class="result__top">
+    <div>
+      <p class="eyebrow">{{ language.t('resultEyebrow') }}</p>
+      <h2>{{ language.categoryName(result().category.key) }}</h2>
+      <p class="bin bin--{{ result().category.binColor }}">
+        {{ language.t('container') }} {{ language.binName(result().category.binColor) }}
+      </p>
+    </div>
+    <span class="result__tag">{{ language.t('goodJob') }} +{{ result().pointsAwarded }} pts</span>
+  </div>
+  <p class="result__instructions">{{ language.categoryInstructions(result().category.key) }}</p>
+  <div class="result__footer">
+    <p class="points">{{ language.t('totalScore') }} {{ result().totalPoints }} pts</p>
+    @if (result().source === 'heuristic') {
+      <p class="ai-notice">{{ language.t('iaNotice') }}</p>
+    }
+  </div>
+</section>
