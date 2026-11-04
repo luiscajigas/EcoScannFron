@@ -6,8 +6,8 @@ import { environment } from '../../../environments/environment';
 import { LoginComponent } from './login.component';
 
 describe('LoginComponent', () => {
-  const URL_LOGIN = `${environment.apiUrl}/auth/login`;
-  let componente: LoginComponent;
+  const LOGIN_URL = `${environment.apiUrl}/auth/login`;
+  let component: LoginComponent;
   let backend: HttpTestingController;
 
   beforeEach(() => {
@@ -15,7 +15,7 @@ describe('LoginComponent', () => {
     TestBed.configureTestingModule({
       providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()]
     });
-    componente = TestBed.createComponent(LoginComponent).componentInstance;
+    component = TestBed.createComponent(LoginComponent).componentInstance;
     backend = TestBed.inject(HttpTestingController);
   });
 
@@ -24,47 +24,47 @@ describe('LoginComponent', () => {
     localStorage.clear();
   });
 
-  it('quita los espacios del correo antes de enviarlo', () => {
-    componente.email.set('  ana@ejemplo.com ');
-    componente.password.set('secreto123');
-    componente.ingresar();
-    expect(backend.expectOne(URL_LOGIN).request.body.email).toBe('ana@ejemplo.com');
+  it('trims the email before sending it', () => {
+    component.email.set('  ana@example.com ');
+    component.password.set('secret123');
+    component.submit();
+    expect(backend.expectOne(LOGIN_URL).request.body.email).toBe('ana@example.com');
   });
 
-  it('no envía si faltan datos', () => {
-    componente.email.set('   ');
-    componente.password.set('secreto123');
-    componente.ingresar();
-    backend.expectNone(URL_LOGIN);
+  it('does not send if data is missing', () => {
+    component.email.set('   ');
+    component.password.set('secret123');
+    component.submit();
+    backend.expectNone(LOGIN_URL);
   });
 
-  it('no envía dos veces mientras carga', () => {
-    componente.email.set('ana@ejemplo.com');
-    componente.password.set('secreto123');
-    componente.ingresar();
-    componente.ingresar();
-    expect(componente.cargando()).toBeTrue();
-    backend.expectOne(URL_LOGIN);
+  it('does not send twice while loading', () => {
+    component.email.set('ana@example.com');
+    component.password.set('secret123');
+    component.submit();
+    component.submit();
+    expect(component.isLoading()).toBeTrue();
+    backend.expectOne(LOGIN_URL);
   });
 
-  it('muestra el error traducido y libera el botón', () => {
-    componente.email.set('ana@ejemplo.com');
-    componente.password.set('mala');
-    componente.ingresar();
-    backend.expectOne(URL_LOGIN).flush(
-      { error: 'x', codigo: 'CREDENCIALES_INVALIDAS' },
+  it('shows the translated error and releases the button', () => {
+    component.email.set('ana@example.com');
+    component.password.set('wrong');
+    component.submit();
+    backend.expectOne(LOGIN_URL).flush(
+      { error: 'x', code: 'INVALID_CREDENTIALS' },
       { status: 401, statusText: 'Unauthorized' }
     );
-    expect(componente.error()).toContain('Credenciales');
-    expect(componente.cargando()).toBeFalse();
+    expect(component.error()).toContain('Credenciales');
+    expect(component.isLoading()).toBeFalse();
   });
 
-  it('entra al dashboard si el login es correcto', () => {
-    const navegar = spyOn(TestBed.inject(Router), 'navigate');
-    componente.email.set('ana@ejemplo.com');
-    componente.password.set('secreto123');
-    componente.ingresar();
-    backend.expectOne(URL_LOGIN).flush({ token: 't', usuario: { id: 1, nombre: 'Ana', email: 'a', puntos: 0 } });
-    expect(navegar).toHaveBeenCalledWith(['/dashboard']);
+  it('goes to the dashboard if the login succeeds', () => {
+    const navigate = spyOn(TestBed.inject(Router), 'navigate');
+    component.email.set('ana@example.com');
+    component.password.set('secret123');
+    component.submit();
+    backend.expectOne(LOGIN_URL).flush({ token: 't', user: { id: 1, name: 'Ana', email: 'a', points: 0 } });
+    expect(navigate).toHaveBeenCalledWith(['/dashboard']);
   });
 });
