@@ -1,41 +1,19 @@
-export interface Categoria {
-  clave: string;
-  nombre: string;
-  instrucciones: string;
-  color_contenedor: string;
-  puntos: number;
-}
+import { components } from '../api/contrato';
 
-export interface Escaneo {
-  id: number;
-  categoria_clave: string;
-  categoria_nombre: string;
-  instrucciones: string;
-  color_contenedor: string;
-  confianza: number;
-  origen: 'heuristica' | 'ia';
-  puntos_otorgados: number;
-  creado_en: string;
-}
+/**
+ * Tipos de la API. Todos salen del contrato OpenAPI del backend: no se escriben
+ * a mano, para que el compilador avise si la API cambia.
+ */
+type Esquemas = components['schemas'];
 
-export interface ResultadoEscaneo {
-  id: number;
-  categoria: {
-    clave: string;
-    nombre: string;
-    instrucciones: string;
-    color_contenedor: string;
-  };
-  origen: string;
-  confianza: number;
-  puntosOtorgados: number;
-  puntosTotales: number;
-}
-
-export interface ResultadoWorker {
-  categoriaClave: string;
-  confianza: number;
-  anchoPx: number;
-  altoPx: number;
-  imagenComprimidaBase64: string;
-}
+export type CategoriaClave = Esquemas['CategoriaClave'];
+export type CodigoError = Esquemas['CodigoError'];
+export type ColorContenedor = Esquemas['ColorContenedor'];
+export type ErrorApi = Esquemas['ErrorApi'];
+export type Escaneo = Esquemas['Escaneo'];
+export type RespuestaAuth = Esquemas['RespuestaAuth'];
+export type ResultadoEscaneo = Esquemas['ResultadoEscaneo'];
+export type SolicitudEscaneo = Esquemas['SolicitudEscaneo'];
+export type SolicitudLogin = Esquemas['SolicitudLogin'];
+export type SolicitudRegistro = Esquemas['SolicitudRegistro'];
+export type Usuario = Esquemas['Usuario'];
