@@ -1,4 +1,5 @@
 import { Injectable, signal } from '@angular/core';
+import { almacenamiento } from './almacenamiento';
 
 const CLAVE_TEMA = 'ecoscan_tema';
 
@@ -7,7 +8,7 @@ export class ThemeService {
   readonly modoClaro = signal(false);
 
   constructor() {
-    if (typeof localStorage !== 'undefined' && localStorage.getItem(CLAVE_TEMA) === 'claro') {
+    if (almacenamiento.leer(CLAVE_TEMA) === 'claro') {
       this.modoClaro.set(true);
     }
     this.aplicarTema();
@@ -15,9 +16,7 @@ export class ThemeService {
 
   alternar(): void {
     this.modoClaro.update((claro) => !claro);
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem(CLAVE_TEMA, this.modoClaro() ? 'claro' : 'oscuro');
-    }
+    almacenamiento.guardar(CLAVE_TEMA, this.modoClaro() ? 'claro' : 'oscuro');
     this.aplicarTema();
   }
 
