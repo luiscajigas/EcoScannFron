@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "test:ci": "ng test --watch=false --browsers=ChromeHeadless",
-    "contrato:tipos": "cd ../ecoScannBack && npx openapi-typescript contrato/openapi.yaml -o ../EcoScannFron/src/app/api/contrato.ts"
+    "contract:types": "cd ../ecoScannBack && npx openapi-typescript contract/openapi.yaml -o ../EcoScannFron/src/app/api/contract.ts"
   },
   "private": true,
   "engines": {
