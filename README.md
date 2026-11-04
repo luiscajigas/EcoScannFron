@@ -1,27 +1,38 @@
-# Frontend
+# EcoScan - Frontend
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.21.
+Aplicación en Angular para clasificar residuos con una foto. La API está en el repositorio [ecoScannBack](https://github.com/luiscajigas/ecoScannBack).
 
-## Development server
+Producción: https://eco-scann-fron.vercel.app
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Las decisiones de diseño y sus trade-offs están en [`docs/DECISIONES.md`](docs/DECISIONES.md).
 
-## Code scaffolding
+## Ejecutar en local
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Necesita el backend corriendo en `http://localhost:3002`.
 
-## Build
+```powershell
+npm ci
+npm start
+```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+La app queda en `http://localhost:4200`.
 
-## Running unit tests
+## Comandos
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+| Comando | Qué hace |
+|---|---|
+| `npm start` | Servidor de desarrollo |
+| `npm run build` | Compilación de producción en `dist/frontend/browser` |
+| `npm test` | Pruebas unitarias; necesitan Chrome, o Edge indicando su ruta en `CHROME_BIN` |
+| `npm run contrato:tipos` | Regenera los tipos desde el contrato; necesita `ecoScannBack` en la carpeta vecina |
 
-## Running end-to-end tests
+## Estructura
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+| Carpeta | Responsabilidad |
+|---|---|
+| `src/app/api/` | Tipos generados desde el contrato OpenAPI; no se editan a mano |
+| `src/app/models/` | Nombres cortos para los tipos del contrato |
+| `src/app/pages/` | Páginas y sus componentes |
+| `src/app/services/` | Autenticación, escaneos, Worker, idioma y tema |
+| `src/app/workers/` | Web Worker que procesa las imágenes |
+| `src/app/i18n/` | Textos en español e inglés |
