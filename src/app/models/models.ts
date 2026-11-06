@@ -17,3 +17,4 @@ export type Scan = Schemas['Scan'];
 export type ScanRequest = Schemas['ScanRequest'];
 export type ScanResult = Schemas['ScanResult'];
 export type User = Schemas['User'];
+export type UserStats = Schemas['UserStats'];
