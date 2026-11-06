@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="EcoScan">
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1f8a4c"/>
+      <stop offset="1" stop-color="#0c4a2e"/>
+    </linearGradient>
+    <linearGradient id="arrows" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#c5f78f"/>
+      <stop offset="1" stop-color="#7fd14f"/>
+    </linearGradient>
+  </defs>
+  <path d="M32 3 57 17.5v29L32 61 7 46.5v-29Z" fill="url(#background)" stroke="url(#background)" stroke-width="5" stroke-linejoin="round"/>
+  <g fill="url(#arrows)">
+    <path d="M13.3 35.3A19 19 0 0 1 44.2 17.4" fill="none" stroke="url(#arrows)" stroke-width="5" stroke-linecap="round"/>
+    <path d="M49.6 21.9 48.1 12.8 40.3 22Z" stroke="#a5e66e" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M50.7 28.7A19 19 0 0 1 19.8 46.6" fill="none" stroke="url(#arrows)" stroke-width="5" stroke-linecap="round"/>
+    <path d="M14.4 42.1 15.9 51.2 23.7 42Z" stroke="#a5e66e" stroke-width="1.5" stroke-linejoin="round"/>
+  </g>
+  <path d="M41 23C30 22 23 29 24 40 35 41 42 34 41 23Z" fill="#fff"/>
+  <path d="M26 38 36 28" fill="none" stroke="#1f8a4c" stroke-width="2" stroke-linecap="round"/>
+</svg>
