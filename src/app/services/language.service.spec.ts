@@ -36,6 +36,14 @@ describe('LanguageService', () => {
     language.toggle();
   });
 
+  it('formats calendar days without shifting them to another day', () => {
+    expect(language.formatDay('2026-11-06')).toContain('6');
+    expect(language.formatWeekday('2026-11-06')).toContain('vie');
+    language.toggle();
+    expect(language.formatWeekday('2026-11-06')).toBe('Fri');
+    language.toggle();
+  });
+
   it('uses the fallback message if the code is missing or unknown', () => {
     expect(language.httpError(errorWithCode(500), 'loginError')).toBe(es.loginError);
     expect(language.httpError(errorWithCode(500, 'NEW_CODE'), 'loginError')).toBe(es.loginError);

@@ -18,6 +18,8 @@ const CATEGORIES: Record<CategoryKey, { name: TranslationKey; instructions: Tran
   non_recyclable: { name: 'categoryOther', instructions: 'categoryOtherInstructions' }
 };
 
+export const CATEGORY_KEYS = Object.keys(CATEGORIES) as CategoryKey[];
+
 const BINS: Record<BinColor, TranslationKey> = {
   green: 'containerGreen',
   blue: 'containerBlue',
@@ -72,6 +74,20 @@ export class LanguageService {
     return this.t(BINS[color]);
   }
 
+  /** Date and time of a scan, in the user's own time zone. */
+  formatDateTime(isoDate: string): string {
+    return new Intl.DateTimeFormat(this.current(), { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(isoDate));
+  }
+
+  /** Long name of a calendar day (YYYY-MM-DD), which has no time zone of its own. */
+  formatDay(date: string): string {
+    return this.formatCalendarDate(date, { weekday: 'long', day: 'numeric', month: 'short' });
+  }
+
+  formatWeekday(date: string): string {
+    return this.formatCalendarDate(date, { weekday: 'short' });
+  }
+
   /** Turns an HTTP error into a message for the user, in the current language. */
   httpError(err: unknown, fallback: TranslationKey): string {
     if (err instanceof TimeoutError) return this.t('serverUnavailable');
@@ -80,6 +96,10 @@ export class LanguageService {
 
     const code = (err.error as Partial<ApiError> | null)?.code;
     return this.t(code && API_ERRORS[code] ? API_ERRORS[code] : fallback);
+  }
+
+  private formatCalendarDate(date: string, options: Intl.DateTimeFormatOptions): string {
+    return new Intl.DateTimeFormat(this.current(), { ...options, timeZone: 'UTC' }).format(new Date(`${date}T00:00:00Z`));
   }
 
   private applyLanguage(): void {
