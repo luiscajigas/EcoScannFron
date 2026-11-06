@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
-import { Scan } from '../../models/models';
-import { LanguageService } from '../../services/language.service';
+import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
+import { CategoryKey, Scan } from '../../models/models';
+import { CATEGORY_KEYS, LanguageService } from '../../services/language.service';
 
-/** Presentational component: the page loads the data. */
+/** Presentational component: the page loads the data and reacts to the outputs. */
 @Component({
   selector: 'app-scan-history',
   templateUrl: './scan-history.component.html',
@@ -10,6 +10,20 @@ import { LanguageService } from '../../services/language.service';
 })
 export class ScanHistoryComponent {
   readonly language = inject(LanguageService);
+  readonly categoryKeys = CATEGORY_KEYS;
+
   readonly scans = input.required<Scan[]>();
   readonly isLoading = input.required<boolean>();
+  readonly totalCount = input.required<number>();
+  readonly filter = input<CategoryKey | null>(null);
+  readonly hasMore = input(false);
+  readonly isLoadingMore = input(false);
+
+  readonly filterChange = output<CategoryKey | null>();
+  readonly loadMore = output<void>();
+
+  onFilterChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+    this.filterChange.emit(value ? (value as CategoryKey) : null);
+  }
 }

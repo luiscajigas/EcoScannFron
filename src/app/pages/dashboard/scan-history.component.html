@@ -1,23 +1,46 @@
 <section class="history">
   <div class="history__heading">
     <h2>{{ language.t('activity') }}</h2>
-    <span class="history__count">{{ scans().length }} {{ scans().length === 1 ? language.t('scanOne') : language.t('scanMany') }}</span>
+    <span class="history__count">{{ totalCount() }} {{ totalCount() === 1 ? language.t('scanOne') : language.t('scanMany') }}</span>
+    <select
+      class="history__filter"
+      [attr.aria-label]="language.t('historyFilterLabel')"
+      (change)="onFilterChange($event)"
+    >
+      <option value="" [selected]="!filter()">{{ language.t('historyFilterAll') }}</option>
+      @for (key of categoryKeys; track key) {
+        <option [value]="key" [selected]="filter() === key">{{ language.categoryName(key) }}</option>
+      }
+    </select>
   </div>
+
   @if (isLoading()) {
     <p class="empty-state">{{ language.t('loadingHistory') }}</p>
   } @else if (scans().length) {
     <ul>
       @for (scan of scans(); track scan.id) {
         <li>
-          <span class="history__name">
-            <span class="chip-dot chip-dot--{{ scan.binColor }}" aria-hidden="true"></span>
+          @if (scan.thumbnail; as thumbnail) {
+            <img class="history__thumbnail" [src]="thumbnail" width="44" height="44" loading="lazy" alt="" />
+          } @else {
+            <span class="history__thumbnail history__thumbnail--empty" aria-hidden="true">
+              <span class="chip-dot chip-dot--{{ scan.binColor }}"></span>
+            </span>
+          }
+          <span class="history__details">
             <span class="chip">{{ language.categoryName(scan.categoryKey) }}</span>
+            <time class="history__date" [attr.datetime]="scan.createdAt">{{ language.formatDateTime(scan.createdAt) }}</time>
           </span>
           <span class="history__points">+{{ scan.pointsAwarded }} pts</span>
         </li>
       }
     </ul>
+    @if (hasMore()) {
+      <button class="history__more" type="button" [disabled]="isLoadingMore()" (click)="loadMore.emit()">
+        {{ isLoadingMore() ? language.t('loadingMore') : language.t('loadMore') }}
+      </button>
+    }
   } @else {
-    <p class="empty-state">{{ language.t('noScans') }}</p>
+    <p class="empty-state">{{ filter() ? language.t('noScansForFilter') : language.t('noScans') }}</p>
   }
 </section>
