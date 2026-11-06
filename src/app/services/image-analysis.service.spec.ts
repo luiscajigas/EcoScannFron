@@ -27,7 +27,8 @@ const RESULT: AnalysisResult = {
   confidence: 0.6,
   widthPx: 10,
   heightPx: 10,
-  compressedImageBase64: 'data:image/jpeg;base64,AAAA'
+  compressedImageBase64: 'data:image/jpeg;base64,AAAA',
+  thumbnailBase64: 'data:image/jpeg;base64,BBBB'
 };
 
 describe('ImageAnalysisService', () => {

@@ -11,6 +11,30 @@ import { averageColor, classifyByColor } from './classify-color';
 
 const MAX_SIDE = 768;
 const JPEG_QUALITY = 0.7;
+const THUMBNAIL_SIDE = 96;
+const THUMBNAIL_QUALITY = 0.6;
+
+const toDataUrl = (blob: Blob): string => new FileReaderSync().readAsDataURL(blob);
+
+/** Square crop from the center: only this small copy is stored with the scan. */
+async function createThumbnail(bitmap: ImageBitmap): Promise<string> {
+  const side = Math.min(bitmap.width, bitmap.height);
+  const canvas = new OffscreenCanvas(THUMBNAIL_SIDE, THUMBNAIL_SIDE);
+  const context = canvas.getContext('2d');
+  if (!context) throw new Error('The browser did not allow creating the canvas.');
+  context.drawImage(
+    bitmap,
+    (bitmap.width - side) / 2,
+    (bitmap.height - side) / 2,
+    side,
+    side,
+    0,
+    0,
+    THUMBNAIL_SIDE,
+    THUMBNAIL_SIDE
+  );
+  return toDataUrl(await canvas.convertToBlob({ type: 'image/jpeg', quality: THUMBNAIL_QUALITY }));
+}
 
 async function analyze(file: Blob): Promise<AnalysisResult> {
   const bitmap = await createImageBitmap(file);
@@ -34,7 +58,8 @@ async function analyze(file: Blob): Promise<AnalysisResult> {
       confidence,
       widthPx: width,
       heightPx: height,
-      compressedImageBase64: new FileReaderSync().readAsDataURL(compressed)
+      compressedImageBase64: toDataUrl(compressed),
+      thumbnailBase64: await createThumbnail(bitmap)
     };
   } finally {
     // The bitmap uses memory outside the garbage collector, so it must be released by hand.

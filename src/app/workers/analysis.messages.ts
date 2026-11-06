@@ -15,6 +15,7 @@ export interface AnalysisResult {
   widthPx: number;
   heightPx: number;
   compressedImageBase64: string;
+  thumbnailBase64: string;
 }
 
 export type AnalysisResponse =
