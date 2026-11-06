@@ -67,6 +67,18 @@ Un ejemplo de lo que protege: los `Record` de `language.service.ts` son exhausti
 - **Interceptor:** agrega el token y maneja el tiempo límite y la sesión expirada en un solo lugar. El token solo viaja a la API propia.
 - **Códigos de error:** la traducción depende de un `code` estable, no de comparar textos en español.
 
+## Estadísticas e historial
+
+- **Gráficas sin librería:** son barras en HTML y CSS. **Se gana:** nada de peso extra y funcionan con el tema claro y oscuro. **Se paga:** para gráficas más complejas convendría una librería.
+- **Un solo color en las gráficas:** cada gráfica muestra una sola serie, así que el color no necesita distinguir nada y la longitud de la barra comunica el valor.
+- **Una fila extra para saber si hay más páginas:** se piden 11 filas para mostrar 10. Evita otra consulta para contar.
+- **Cancelar la petición anterior del historial:** si el usuario cambia de filtro rápido, una respuesta lenta no puede sobrescribir la más reciente.
+- **Miniaturas en el Worker:** se generan en el mismo hilo que procesa la foto, sin bloquear la interfaz.
+
+## Logo e íconos
+
+El logo original está en `design/logo-source.jpg` y no se publica. `public/logo.png` es esa imagen sin fondo. El ícono `public/icon.svg` es una versión simplificada, porque el logo completo no se distingue a 16 píxeles; de él salen `favicon.ico` y `apple-touch-icon.png`.
+
 ## Limitación conocida
 
 El token se guarda en `localStorage`, accesible para cualquier script de la página. Una cookie `HttpOnly` sería más segura, pero con el frontend y el backend en dominios distintos requeriría cambiar CORS y proteger contra CSRF. Para este proyecto se acepta el riesgo, y Angular ya escapa el contenido de las plantillas.
