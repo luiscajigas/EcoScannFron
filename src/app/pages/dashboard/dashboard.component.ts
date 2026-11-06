@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { Scan, ScanResult } from '../../models/models';
+import { Subscription } from 'rxjs';
+import { CategoryKey, Scan, ScanResult, UserStats } from '../../models/models';
 import { AuthService } from '../../services/auth.service';
 import { ImageAnalysisError, ImageAnalysisService } from '../../services/image-analysis.service';
 import { LanguageService } from '../../services/language.service';
@@ -10,12 +11,14 @@ import { ThemeService } from '../../services/theme.service';
 import { AnalysisResult } from '../../workers/analysis.messages';
 import { ScanHistoryComponent } from './scan-history.component';
 import { ScanResultComponent } from './scan-result.component';
+import { ScanStatsComponent } from './scan-stats.component';
 
 const MAX_FILE_SIZE_BYTES = 25 * 1024 * 1024;
+const HISTORY_PAGE_SIZE = 10;
 
 @Component({
   selector: 'app-dashboard',
-  imports: [ScanHistoryComponent, ScanResultComponent],
+  imports: [ScanHistoryComponent, ScanResultComponent, ScanStatsComponent],
   // Provided here so the Worker lives as long as this page.
   providers: [ImageAnalysisService],
   templateUrl: './dashboard.component.html',
@@ -27,20 +30,35 @@ export class DashboardComponent implements OnInit {
   private readonly imageAnalysis = inject(ImageAnalysisService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private historyRequest?: Subscription;
   readonly theme = inject(ThemeService);
   readonly language = inject(LanguageService);
 
   readonly user = this.auth.user;
   readonly history = signal<Scan[]>([]);
+  readonly historyFilter = signal<CategoryKey | null>(null);
   readonly isLoadingHistory = signal(true);
+  readonly isLoadingMoreHistory = signal(false);
+  readonly hasMoreHistory = signal(false);
+  readonly stats = signal<UserStats | null>(null);
+  readonly hasStatsError = signal(false);
   readonly isProcessing = signal(false);
   readonly preview = signal<string | null>(null);
   readonly result = signal<ScanResult | null>(null);
   readonly error = signal<string | null>(null);
 
+  /** Total scans for the current filter; the history only holds the loaded pages. */
+  readonly historyCount = computed(() => {
+    const stats = this.stats();
+    if (!stats) return this.history().length;
+    const filter = this.historyFilter();
+    return filter ? stats.byCategory.find((c) => c.categoryKey === filter)?.count ?? 0 : stats.totalScans;
+  });
+
   ngOnInit(): void {
     this.destroyRef.onDestroy(() => this.releasePreview());
     this.loadHistory();
+    this.loadStats();
   }
 
   async onFileSelected(event: Event): Promise<void> {
@@ -69,6 +87,16 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+  onHistoryFilterChange(filter: CategoryKey | null): void {
+    this.historyFilter.set(filter);
+    this.loadHistory();
+  }
+
+  loadMoreHistory(): void {
+    this.isLoadingMoreHistory.set(true);
+    this.fetchHistory(this.history().length);
+  }
+
   logOut(): void {
     this.auth.logOut();
     this.router.navigate(['/login']);
@@ -76,24 +104,48 @@ export class DashboardComponent implements OnInit {
 
   private loadHistory(): void {
     this.isLoadingHistory.set(true);
-    this.scans
-      .getHistory()
+    this.fetchHistory(0);
+  }
+
+  private fetchHistory(offset: number): void {
+    // Cancels the previous request so a slow response cannot overwrite a newer filter.
+    this.historyRequest?.unsubscribe();
+    this.historyRequest = this.scans
+      // One extra row reveals whether there is another page.
+      .getHistory({ limit: HISTORY_PAGE_SIZE + 1, offset, category: this.historyFilter() ?? undefined })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (scans) => {
-          this.history.set(scans);
+          const page = scans.slice(0, HISTORY_PAGE_SIZE);
+          this.history.set(offset ? [...this.history(), ...page] : page);
+          this.hasMoreHistory.set(scans.length > HISTORY_PAGE_SIZE);
           this.isLoadingHistory.set(false);
+          this.isLoadingMoreHistory.set(false);
         },
         error: (err) => {
           this.isLoadingHistory.set(false);
+          this.isLoadingMoreHistory.set(false);
           this.error.set(this.language.httpError(err, 'scanLoadError'));
         }
       });
   }
 
-  private saveScan({ categoryKey, confidence, widthPx, heightPx, compressedImageBase64 }: AnalysisResult): void {
+  private loadStats(): void {
     this.scans
-      .create({ categoryKey, confidence, widthPx, heightPx, imageBase64: compressedImageBase64 })
+      .getStats(Intl.DateTimeFormat().resolvedOptions().timeZone)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (stats) => {
+          this.stats.set(stats);
+          this.hasStatsError.set(false);
+        },
+        error: () => this.hasStatsError.set(true)
+      });
+  }
+
+  private saveScan({ categoryKey, confidence, widthPx, heightPx, compressedImageBase64, thumbnailBase64 }: AnalysisResult): void {
+    this.scans
+      .create({ categoryKey, confidence, widthPx, heightPx, imageBase64: compressedImageBase64, thumbnailBase64 })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
@@ -101,6 +153,7 @@ export class DashboardComponent implements OnInit {
           this.isProcessing.set(false);
           this.auth.updatePoints(response.totalPoints);
           this.loadHistory();
+          this.loadStats();
         },
         error: (err) => {
           this.isProcessing.set(false);

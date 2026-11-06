@@ -1,7 +1,7 @@
 <main class="page">
   <header class="topbar">
     <div class="brand">
-      <img class="brand__mark" src="/logo.png" width="44" height="44" alt="" aria-hidden="true" />
+      <img class="brand__mark" src="/logo.png" width="52" height="52" alt="" aria-hidden="true" />
       <div>
         <h1>EcoScan</h1>
         <p>{{ language.t('dashboardTagline') }}</p>
@@ -119,5 +119,20 @@
     <app-scan-result [result]="latest" />
   }
 
-  <app-scan-history [scans]="history()" [isLoading]="isLoadingHistory()" />
+  @if (stats(); as userStats) {
+    <app-scan-stats [stats]="userStats" />
+  } @else if (hasStatsError()) {
+    <p class="empty-state">{{ language.t('statsLoadError') }}</p>
+  }
+
+  <app-scan-history
+    [scans]="history()"
+    [isLoading]="isLoadingHistory()"
+    [totalCount]="historyCount()"
+    [filter]="historyFilter()"
+    [hasMore]="hasMoreHistory()"
+    [isLoadingMore]="isLoadingMoreHistory()"
+    (filterChange)="onHistoryFilterChange($event)"
+    (loadMore)="loadMoreHistory()"
+  />
 </main>
