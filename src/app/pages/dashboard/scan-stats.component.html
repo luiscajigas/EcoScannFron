@@ -1,0 +1,60 @@
+<section class="stats" aria-labelledby="stats-title">
+  <h2 id="stats-title">{{ language.t('statsTitle') }}</h2>
+
+  <dl class="stats__tiles">
+    <div class="stats__tile">
+      <dt>{{ language.t('statsTotalScans') }}</dt>
+      <dd>{{ stats().totalScans }}</dd>
+    </div>
+    <div class="stats__tile">
+      <dt>{{ language.t('statsCurrentStreak') }}</dt>
+      <dd>{{ days(stats().currentStreak) }}</dd>
+    </div>
+    <div class="stats__tile">
+      <dt>{{ language.t('statsLongestStreak') }}</dt>
+      <dd>{{ days(stats().longestStreak) }}</dd>
+    </div>
+  </dl>
+
+  @if (stats().totalScans) {
+    <div class="stats__charts">
+      <figure class="stats__chart">
+        <figcaption>{{ language.t('statsByCategory') }}</figcaption>
+        <ul class="category-chart">
+          @for (category of stats().byCategory; track category.categoryKey) {
+            <li class="category-chart__row">
+              <span class="category-chart__label">{{ language.categoryName(category.categoryKey) }}</span>
+              <span class="category-chart__track" aria-hidden="true">
+                <span class="category-chart__bar" [style.width.%]="categoryPercent(category.count)"></span>
+              </span>
+              <span class="category-chart__value">{{ category.count }}</span>
+            </li>
+          }
+        </ul>
+      </figure>
+
+      <figure class="stats__chart">
+        <figcaption>{{ language.t('statsLastSevenDays') }}</figcaption>
+        <ul class="week-chart">
+          @for (day of stats().lastSevenDays; track day.date) {
+            <li
+              class="week-chart__day"
+              tabindex="0"
+              [attr.data-tooltip]="language.formatDay(day.date) + ': ' + scans(day.count)"
+              [attr.aria-label]="language.formatDay(day.date) + ': ' + scans(day.count)"
+            >
+              <span class="week-chart__plot" aria-hidden="true">
+                @if (day.count) {
+                  <span class="week-chart__bar" [style.height.%]="dayPercent(day.count)"></span>
+                }
+              </span>
+              <span class="week-chart__label" aria-hidden="true">{{ language.formatWeekday(day.date) }}</span>
+            </li>
+          }
+        </ul>
+      </figure>
+    </div>
+  } @else {
+    <p class="empty-state">{{ language.t('statsEmpty') }}</p>
+  }
+</section>
