@@ -4,22 +4,21 @@ import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { LanguageService } from '../../services/language.service';
-import { ThemeService } from '../../services/theme.service';
+import { AuthBrandComponent } from '../../shared/auth-brand/auth-brand.component';
 
 // Must match minLength of RegisterRequest.password in the contract.
 const MIN_PASSWORD_LENGTH = 8;
 
 @Component({
   selector: 'app-register',
-  imports: [FormsModule, RouterLink],
+  imports: [AuthBrandComponent, FormsModule, RouterLink],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.css',
+  styleUrl: '../auth-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RegisterComponent {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
-  readonly theme = inject(ThemeService);
   readonly language = inject(LanguageService);
 
   readonly name = signal('');
@@ -43,7 +42,7 @@ export class RegisterComponent {
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: () => this.router.navigate(['/dashboard']),
-        error: (err) => this.error.set(this.language.httpError(err, 'registerError'))
+        error: (err) => this.error.set(this.language.httpError(err, 'registerError', { INVALID_DATA: 'registerInvalidData' }))
       });
   }
 }
