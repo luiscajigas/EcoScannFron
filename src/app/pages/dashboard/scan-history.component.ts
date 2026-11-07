@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, output, ViewEncapsulation } from '@angular/core';
 import { CategoryKey, Scan } from '../../models/models';
 import { CATEGORY_KEYS, LanguageService } from '../../services/language.service';
 
@@ -6,6 +6,9 @@ import { CATEGORY_KEYS, LanguageService } from '../../services/language.service'
 @Component({
   selector: 'app-scan-history',
   templateUrl: './scan-history.component.html',
+  styleUrl: './scan-history.component.css',
+  // Without encapsulation: its styles share the design tokens and light theme rules of the page.
+  encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ScanHistoryComponent {

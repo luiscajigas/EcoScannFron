@@ -1,0 +1,35 @@
+.history { margin-top: 1rem; padding: 1.2rem; }
+.history__heading { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1rem; margin-bottom: 0.85rem; }
+.history h2 { margin: 0; font-size: 1rem; }
+.history__count { color: var(--muted); font-size: 0.72rem; }
+.history__filter { max-width: 100%; margin-left: auto; padding: 0.4rem 0.6rem; border: 1px solid var(--border); border-radius: 10px; background: var(--panel-raised); color: var(--text); color-scheme: dark; font: inherit; font-size: 0.75rem; cursor: pointer; }
+.history__more { display: block; margin: 0.8rem auto 0; padding: 0.5rem 1rem; border: 1px solid var(--border); border-radius: 999px; background: transparent; color: var(--text); font: inherit; font-size: 0.78rem; cursor: pointer; }
+.history__more:hover:not(:disabled) { border-color: var(--accent); }
+.history__more:disabled { cursor: progress; opacity: 0.6; }
+.history ul { display: grid; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+.history li { gap: 1rem; min-height: 50px; padding: 0.65rem 0.8rem; border: 1px solid var(--border); border-radius: 13px; background: rgba(255, 255, 255, 0.018); }
+.history__details { display: grid; flex: 1; gap: 0.15rem; min-width: 0; }
+.history__date { color: var(--muted); font-size: 0.72rem; }
+.history__thumbnail { display: grid; width: 44px; height: 44px; flex: 0 0 auto; place-items: center; object-fit: cover; border-radius: 10px; }
+.history__thumbnail--empty { background: var(--panel-raised); }
+.history__points { flex: 0 0 auto; gap: 0.5rem; color: var(--muted); font-size: 0.75rem; }
+.chip { overflow: hidden; color: var(--text); font-size: 0.82rem; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.chip-dot { width: 8px; height: 8px; flex: 0 0 auto; border-radius: 50%; background: var(--accent); }
+.chip-dot--blue { background: var(--blue); }
+.chip-dot--white { background: #e0e9e2; }
+.chip-dot--black { background: #708078; }
+:root[data-theme='light'] app-dashboard .history li {
+  background: rgba(54, 92, 54, 0.025);
+}
+:root[data-theme='light'] app-dashboard .history__filter {
+  color-scheme: light;
+}
+:root[data-theme='light'] app-dashboard .chip-dot--white {
+  background: #829184;
+}
+:root[data-theme='light'] app-dashboard .chip-dot--black {
+  background: #586b5e;
+}
+@media (max-width: 420px) {
+  .history__filter { width: 100%; margin-left: 0; }
+}
