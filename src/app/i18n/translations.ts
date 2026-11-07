@@ -1,5 +1,6 @@
 export const es = {
-  apiInvalidData: 'Revisa los datos: usa un correo válido y una contraseña de al menos 8 caracteres.',
+  apiInvalidData: 'Los datos enviados no son válidos.',
+  registerInvalidData: 'Revisa los datos: usa un correo válido y una contraseña de al menos 8 caracteres.',
   apiUserNotFound: 'No encontramos tu cuenta.',
   apiRouteNotFound: 'No encontramos lo que buscabas.',
   apiImageTooLarge: 'La imagen es demasiado grande.',
@@ -71,7 +72,7 @@ export const es = {
   dashboardIntro: 'Toma una foto, descubre dónde va y convierte tus buenos hábitos en puntos.',
   yourPoints: 'Tus puntos',
   scanTitle: 'Escanea un residuo',
-  betaClassification: '✦ Clasificación con IA',
+  aiClassification: '✦ Clasificación con IA',
   chooseAnotherPhoto: 'Elegir otra foto del residuo',
   takeOrUploadPhoto: 'Tomar o subir una foto del residuo',
   analyzePhoto: 'Analizando foto…',
@@ -95,7 +96,7 @@ export const es = {
   photoBackgroundTip: 'Coloca el objeto sobre un fondo simple para que destaque.',
   resultEyebrow: 'Resultado de tu escaneo',
   goodJob: '¡Buen trabajo!',
-  container: 'Contenedor',
+  bin: 'Contenedor',
   totalScore: 'Puntaje total:',
   activity: 'Tu actividad',
   scanOne: 'escaneo',
@@ -117,22 +118,23 @@ export const es = {
   categoryMetalInstructions: 'Va en el contenedor de reciclables. Latas y tapas metálicas, de ser posible aplastadas.',
   categoryOther: 'No reciclable',
   categoryOtherInstructions: 'Va en el contenedor negro (basura ordinaria). Ej: empaques mixtos, icopor, papel higiénico.',
-  iaNotice: 'La IA no estuvo disponible, así que esta clasificación usa una heurística simple por color y puede no ser exacta.',
+  aiNotice: 'La IA no estuvo disponible, así que esta clasificación usa una heurística simple por color y puede no ser exacta.',
   apiAccountExists: 'Ya existe una cuenta con ese correo.',
   apiInvalidCredentials: 'Credenciales inválidas.',
   apiCategoryUnknown: 'Categoría no reconocida.',
   apiMissingToken: 'No autenticado. Falta el token.',
   apiInvalidToken: 'Token inválido o expirado.',
-  containerGreen: 'verde',
-  containerBlue: 'azul',
-  containerWhite: 'blanco',
-  containerBlack: 'negro'
+  binGreen: 'verde',
+  binBlue: 'azul',
+  binWhite: 'blanco',
+  binBlack: 'negro'
 } as const;
 
 export type TranslationKey = keyof typeof es;
 
 export const en: Record<TranslationKey, string> = {
-  apiInvalidData: 'Check your details: use a valid email and a password of at least 8 characters.',
+  apiInvalidData: 'The data sent is not valid.',
+  registerInvalidData: 'Check your details: use a valid email and a password of at least 8 characters.',
   apiUserNotFound: 'We could not find your account.',
   apiRouteNotFound: 'We could not find what you were looking for.',
   apiImageTooLarge: 'The image is too large.',
@@ -204,7 +206,7 @@ export const en: Record<TranslationKey, string> = {
   dashboardIntro: 'Take a photo, find out where it goes, and turn good habits into points.',
   yourPoints: 'Your points',
   scanTitle: 'Scan an item',
-  betaClassification: '✦ AI classification',
+  aiClassification: '✦ AI classification',
   chooseAnotherPhoto: 'Choose another photo of the item',
   takeOrUploadPhoto: 'Take or upload a photo of an item',
   analyzePhoto: 'Analyzing photo…',
@@ -228,7 +230,7 @@ export const en: Record<TranslationKey, string> = {
   photoBackgroundTip: 'Place the item against a simple background so it stands out.',
   resultEyebrow: 'Your scan result',
   goodJob: 'Nice work!',
-  container: 'Bin',
+  bin: 'Bin',
   totalScore: 'Total score:',
   activity: 'Your activity',
   scanOne: 'scan',
@@ -250,14 +252,14 @@ export const en: Record<TranslationKey, string> = {
   categoryMetalInstructions: 'Put it in the recycling bin. Flatten cans and metal lids if possible.',
   categoryOther: 'Non-recyclable',
   categoryOtherInstructions: 'Put it in the black bin (general waste), e.g. mixed packaging, foam, or tissues.',
-  iaNotice: 'AI was unavailable, so this classification uses a simple color heuristic and may not be accurate.',
+  aiNotice: 'AI was unavailable, so this classification uses a simple color heuristic and may not be accurate.',
   apiAccountExists: 'An account with this email already exists.',
   apiInvalidCredentials: 'Invalid email or password.',
   apiCategoryUnknown: 'Unrecognized category.',
   apiMissingToken: 'You are not signed in. The access token is missing.',
   apiInvalidToken: 'Your session is invalid or has expired.',
-  containerGreen: 'green',
-  containerBlue: 'blue',
-  containerWhite: 'white',
-  containerBlack: 'black'
+  binGreen: 'green',
+  binBlue: 'blue',
+  binWhite: 'white',
+  binBlack: 'black'
 };

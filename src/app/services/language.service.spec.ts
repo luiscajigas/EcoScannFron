@@ -44,6 +44,12 @@ describe('LanguageService', () => {
     language.toggle();
   });
 
+  it('lets a screen override the message of a code', () => {
+    const error = errorWithCode(400, 'INVALID_DATA');
+    expect(language.httpError(error, 'registerError')).toBe(es.apiInvalidData);
+    expect(language.httpError(error, 'registerError', { INVALID_DATA: 'registerInvalidData' })).toBe(es.registerInvalidData);
+  });
+
   it('uses the fallback message if the code is missing or unknown', () => {
     expect(language.httpError(errorWithCode(500), 'loginError')).toBe(es.loginError);
     expect(language.httpError(errorWithCode(500, 'NEW_CODE'), 'loginError')).toBe(es.loginError);

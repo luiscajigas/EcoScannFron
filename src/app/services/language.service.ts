@@ -21,10 +21,10 @@ const CATEGORIES: Record<CategoryKey, { name: TranslationKey; instructions: Tran
 export const CATEGORY_KEYS = Object.keys(CATEGORIES) as CategoryKey[];
 
 const BINS: Record<BinColor, TranslationKey> = {
-  green: 'containerGreen',
-  blue: 'containerBlue',
-  white: 'containerWhite',
-  black: 'containerBlack'
+  green: 'binGreen',
+  blue: 'binBlue',
+  white: 'binWhite',
+  black: 'binBlack'
 };
 
 const API_ERRORS: Record<ErrorCode, TranslationKey> = {
@@ -88,14 +88,18 @@ export class LanguageService {
     return this.formatCalendarDate(date, { weekday: 'short' });
   }
 
-  /** Turns an HTTP error into a message for the user, in the current language. */
-  httpError(err: unknown, fallback: TranslationKey): string {
+  /**
+   * Turns an HTTP error into a message for the user, in the current language.
+   * `overrides` lets a screen give a more specific message for a given code.
+   */
+  httpError(err: unknown, fallback: TranslationKey, overrides: Partial<Record<ErrorCode, TranslationKey>> = {}): string {
     if (err instanceof TimeoutError) return this.t('serverUnavailable');
     if (!(err instanceof HttpErrorResponse)) return this.t(fallback);
     if (SERVER_DOWN_STATUSES.includes(err.status)) return this.t('serverUnavailable');
 
     const code = (err.error as Partial<ApiError> | null)?.code;
-    return this.t(code && API_ERRORS[code] ? API_ERRORS[code] : fallback);
+    if (!code) return this.t(fallback);
+    return this.t(overrides[code] ?? API_ERRORS[code] ?? fallback);
   }
 
   private formatCalendarDate(date: string, options: Intl.DateTimeFormatOptions): string {
