@@ -60,12 +60,21 @@ Un ejemplo de lo que protege: los `Record` de `language.service.ts` son exhausti
 
 **Signals frente a RxJS:** los signals se usan para el estado porque son más simples y siempre tienen un valor. RxJS se mantiene para las peticiones porque es lo que entrega `HttpClient` y modela bien una operación con inicio, error y fin.
 
-## Patrones de componentes
+## Patrones
 
-- **Contenedor y presentación:** `DashboardComponent` carga los datos y coordina. `ScanResultComponent` y `ScanHistoryComponent` solo muestran lo que reciben.
-- **OnPush con signals:** Angular revisa un componente solo cuando cambia algo que usa.
-- **Interceptor:** agrega el token y maneja el tiempo límite y la sesión expirada en un solo lugar. El token solo viaja a la API propia.
-- **Códigos de error:** la traducción depende de un `code` estable, no de comparar textos en español.
+| Patrón | Dónde | Para qué |
+|---|---|---|
+| **Contenedor y presentación** | `DashboardComponent` y sus hijos | La página carga los datos; `ScanStats`, `ScanResult` y `ScanHistory` solo los muestran |
+| **Interceptor** | `auth.interceptor.ts` | Token, tiempo límite y sesión expirada en un solo lugar; el token solo viaja a la API propia |
+| **Guard** | `guards/` | Protege rutas según haya sesión o no |
+| **Fachada** | `ImageAnalysisService` | Oculta el Worker detrás de una Promesa |
+| **Observador** | Signals y RxJS | La vista reacciona a los cambios, con `OnPush` para revisar solo lo necesario |
+| **Tabla de decisión** | `classify-color.ts` | Las reglas de color son datos: agregar una no agrega ramas de código |
+| **Códigos de error** | `language.service.ts` | La traducción depende de un `code` estable, no de comparar textos |
+
+## Estilos
+
+Cada componente tiene su propio CSS, que se descarga junto con él: el login ya no baja los estilos del dashboard. Los del dashboard usan `ViewEncapsulation.None` porque comparten variables de color y las reglas del tema claro. **Se paga:** los nombres de clase deben ser únicos; por eso siguen el formato `bloque__elemento`.
 
 ## Estadísticas e historial
 
