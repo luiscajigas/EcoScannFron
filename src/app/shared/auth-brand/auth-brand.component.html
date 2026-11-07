@@ -1,0 +1,11 @@
+<div class="auth__brand">
+  <img class="auth__brand-mark" src="/logo.png" width="56" height="56" alt="" aria-hidden="true" />
+  <span class="auth__brand-name">EcoScan</span>
+  <button class="language-toggle" type="button" (click)="language.toggle()" [attr.aria-label]="language.t('switchLanguage')">
+    {{ language.current() === 'es' ? 'EN' : 'ES' }}
+  </button>
+  <button class="theme-toggle" type="button" (click)="theme.toggle()" [attr.aria-label]="theme.isLight() ? language.t('themeDarkAria') : language.t('themeLightAria')">
+    <span aria-hidden="true">{{ theme.isLight() ? '☾' : '☀' }}</span>
+    {{ theme.isLight() ? language.t('themeDark') : language.t('themeLight') }}
+  </button>
+</div>
