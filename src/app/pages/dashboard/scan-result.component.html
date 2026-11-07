@@ -4,7 +4,7 @@
       <p class="eyebrow">{{ language.t('resultEyebrow') }}</p>
       <h2>{{ language.categoryName(result().category.key) }}</h2>
       <p class="bin bin--{{ result().category.binColor }}">
-        {{ language.t('container') }} {{ language.binName(result().category.binColor) }}
+        {{ language.t('bin') }} {{ language.binName(result().category.binColor) }}
       </p>
     </div>
     <span class="result__tag">{{ language.t('goodJob') }} +{{ result().pointsAwarded }} pts</span>
@@ -13,7 +13,7 @@
   <div class="result__footer">
     <p class="points">{{ language.t('totalScore') }} {{ result().totalPoints }} pts</p>
     @if (result().source === 'heuristic') {
-      <p class="ai-notice">{{ language.t('iaNotice') }}</p>
+      <p class="ai-notice">{{ language.t('aiNotice') }}</p>
     }
   </div>
 </section>
