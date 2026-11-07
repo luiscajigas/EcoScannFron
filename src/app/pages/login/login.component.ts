@@ -4,19 +4,18 @@ import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { LanguageService } from '../../services/language.service';
-import { ThemeService } from '../../services/theme.service';
+import { AuthBrandComponent } from '../../shared/auth-brand/auth-brand.component';
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, RouterLink],
+  imports: [AuthBrandComponent, FormsModule, RouterLink],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css',
+  styleUrl: '../auth-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginComponent {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
-  readonly theme = inject(ThemeService);
   readonly language = inject(LanguageService);
 
   readonly email = signal('');
