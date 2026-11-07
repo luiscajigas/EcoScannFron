@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, ViewEncapsulation } from '@angular/core';
 import { UserStats } from '../../models/models';
 import { LanguageService } from '../../services/language.service';
 
@@ -6,6 +6,9 @@ import { LanguageService } from '../../services/language.service';
 @Component({
   selector: 'app-scan-stats',
   templateUrl: './scan-stats.component.html',
+  styleUrl: './scan-stats.component.css',
+  // Without encapsulation: its styles share the design tokens and light theme rules of the page.
+  encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ScanStatsComponent {
