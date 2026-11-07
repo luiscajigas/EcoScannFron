@@ -52,8 +52,7 @@
               }
             ],
             "styles": [
-              "src/styles.css",
-              "src/app/pages/dashboard/dashboard.component.css"
+              "src/styles.css"
             ],
             "scripts": [],
             "webWorkerTsConfig": "tsconfig.worker.json"
@@ -68,8 +67,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kB",
-                  "maximumError": "4kB"
+                  "maximumWarning": "12kB",
+                  "maximumError": "16kB"
                 }
               ],
               "outputHashing": "all",

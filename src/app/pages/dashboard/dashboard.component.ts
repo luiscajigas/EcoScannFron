@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -22,6 +22,9 @@ const HISTORY_PAGE_SIZE = 10;
   // Provided here so the Worker lives as long as this page.
   providers: [ImageAnalysisService],
   templateUrl: './dashboard.component.html',
+  styleUrl: './dashboard.component.css',
+  // Without encapsulation: its styles share the design tokens and light theme rules of the page.
+  encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent implements OnInit {
