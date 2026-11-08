@@ -88,6 +88,12 @@ Cada componente tiene su propio CSS, que se descarga junto con él: el login ya 
 
 El logo original está en `design/logo-source.jpg` y no se publica. `public/logo.png` es esa imagen sin fondo. El ícono `public/icon.svg` es una versión simplificada, porque el logo completo no se distingue a 16 píxeles; de él salen `favicon.ico` y `apple-touch-icon.png`.
 
-## Limitación conocida
+## Seguridad del token
 
-El token se guarda en `localStorage`, accesible para cualquier script de la página. Una cookie `HttpOnly` sería más segura, pero con el frontend y el backend en dominios distintos requeriría cambiar CORS y proteger contra CSRF. Para este proyecto se acepta el riesgo, y Angular ya escapa el contenido de las plantillas.
+**Decisión:** el token sigue en `localStorage`, protegido por una política de seguridad de contenido (CSP).
+
+**Por qué no una cookie `HttpOnly`:** el frontend (`vercel.app`) y la API (`onrender.com`) están en sitios distintos. Para el navegador, la cookie de la API sería de terceros, y Safari bloquea esas cookies por defecto: en iPhone no se podría iniciar sesión. Evitarlo exigiría que Vercel reenviara las peticiones a Render. Eso trae sus propios problemas: el límite de intentos vería la IP de Vercel en lugar de la del usuario, y habría que proteger contra CSRF.
+
+**Lo que protege la CSP:** el riesgo real de `localStorage` es que un script ajeno lea el token. La política de `vercel.json` solo permite scripts del propio sitio y conexiones a la propia API, así que un script inyectado no se ejecuta ni puede enviar el token a otro servidor. Por eso se desactivó `inlineCritical`: era el único script en línea de la app.
+
+**Se paga:** si se agrega un servicio externo, como analítica o fuentes de Google, hay que permitirlo en la CSP o el navegador lo bloqueará.
