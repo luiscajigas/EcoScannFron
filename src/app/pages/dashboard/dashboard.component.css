@@ -21,7 +21,7 @@ app-dashboard {
 }
 
 .page {
-  width: min(100% - 2rem, 1120px);
+  width: min(100% - clamp(2rem, 6vw, 7rem), 1680px);
   margin: 0 auto;
   padding: 1.5rem 0 4rem;
 }
