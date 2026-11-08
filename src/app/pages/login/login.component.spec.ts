@@ -59,6 +59,18 @@ describe('LoginComponent', () => {
     expect(component.isLoading()).toBeFalse();
   });
 
+  it('the demo button signs in with the demo account', () => {
+    component.useDemoAccount();
+    const { email, password } = backend.expectOne(LOGIN_URL).request.body;
+    expect([email, password]).toEqual([environment.demoAccount.email, environment.demoAccount.password]);
+  });
+
+  it('shows the demo account on the page', () => {
+    const fixture = TestBed.createComponent(LoginComponent);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.demo-account code')?.textContent).toBe(environment.demoAccount.email);
+  });
+
   it('goes to the dashboard if the login succeeds', () => {
     const navigate = spyOn(TestBed.inject(Router), 'navigate');
     component.email.set('ana@example.com');
