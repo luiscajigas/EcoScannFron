@@ -37,6 +37,17 @@
 
     </form>
 
+    <aside class="demo-account" aria-labelledby="demo-account-title">
+      <p class="demo-account__title" id="demo-account-title">{{ language.t('demoTitle') }}</p>
+      <p class="demo-account__credentials">
+        <span>{{ language.t('email') }}: <code>{{ demoAccount.email }}</code></span>
+        <span>{{ language.t('password') }}: <code>{{ demoAccount.password }}</code></span>
+      </p>
+      <button class="demo-account__use" type="button" [disabled]="isLoading()" (click)="useDemoAccount()">
+        {{ language.t('demoUse') }}
+      </button>
+    </aside>
+
     <p class="auth-link">{{ language.t('noAccount') }} <a routerLink="/register">{{ language.t('createHere') }}</a></p>
 
   </section>

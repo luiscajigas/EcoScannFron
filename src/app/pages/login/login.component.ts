@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { AuthService } from '../../services/auth.service';
 import { LanguageService } from '../../services/language.service';
 import { AuthBrandComponent } from '../../shared/auth-brand/auth-brand.component';
@@ -22,6 +23,14 @@ export class LoginComponent {
   readonly password = signal('');
   readonly isLoading = signal(false);
   readonly error = signal<string | null>(null);
+  readonly demoAccount = environment.demoAccount;
+
+  /** Fills the form with the demo account and signs in, so it can be tried in one click. */
+  useDemoAccount(): void {
+    this.email.set(this.demoAccount.email);
+    this.password.set(this.demoAccount.password);
+    this.submit();
+  }
 
   submit(): void {
     const email = this.email().trim();
