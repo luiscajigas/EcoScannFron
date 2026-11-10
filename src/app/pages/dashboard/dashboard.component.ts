@@ -9,6 +9,7 @@ import { LanguageService } from '../../services/language.service';
 import { ScanService } from '../../services/scan.service';
 import { ThemeService } from '../../services/theme.service';
 import { AnalysisResult } from '../../workers/analysis.messages';
+import { EcoPointsComponent } from './eco-points.component';
 import { ScanHistoryComponent } from './scan-history.component';
 import { ScanResultComponent } from './scan-result.component';
 import { ScanStatsComponent } from './scan-stats.component';
@@ -18,7 +19,7 @@ const HISTORY_PAGE_SIZE = 10;
 
 @Component({
   selector: 'app-dashboard',
-  imports: [ScanHistoryComponent, ScanResultComponent, ScanStatsComponent],
+  imports: [EcoPointsComponent, ScanHistoryComponent, ScanResultComponent, ScanStatsComponent],
   // Provided here so the Worker lives as long as this page.
   providers: [ImageAnalysisService],
   templateUrl: './dashboard.component.html',

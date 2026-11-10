@@ -15,6 +15,7 @@
         <span aria-hidden="true">{{ theme.isLight() ? '☾' : '☀' }}</span>
         {{ theme.isLight() ? language.t('themeDark') : language.t('themeLight') }}
       </button>
+      <a class="link" href="#puntos-ecologicos">{{ language.t('ecoPointsTitle') }}</a>
       @if (user(); as account) {
         <div class="user-pill">
           <span class="user-pill__initial">{{ account.name.charAt(0).toUpperCase() }}</span>
@@ -135,4 +136,6 @@
     (filterChange)="onHistoryFilterChange($event)"
     (loadMore)="loadMoreHistory()"
   />
+
+  <app-eco-points />
 </main>

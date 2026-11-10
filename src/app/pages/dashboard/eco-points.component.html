@@ -1,0 +1,32 @@
+<section class="eco-points" id="puntos-ecologicos" aria-labelledby="eco-points-title">
+  <header class="eco-points__header">
+    <div>
+      <p class="eco-points__eyebrow">{{ language.t('ecoPointsEyebrow') }}</p>
+      <h3 id="eco-points-title">{{ language.t('ecoPointsTitle') }}</h3>
+      <p class="eco-points__intro">{{ language.t('ecoPointsIntro') }}</p>
+    </div>
+    <a class="eco-points__source" href="https://www.ecobot.com.co/ubicaciones-pasto" target="_blank" rel="noopener noreferrer">
+      {{ language.t('ecoPointsSource') }} ↗
+    </a>
+  </header>
+
+  <p class="eco-points__note">{{ language.t('ecoPointsLocationNote') }}</p>
+  @if (mapFailed()) {
+    <p class="eco-points__map-error" role="status">{{ language.t('ecoPointsMapError') }}</p>
+  }
+
+  <div class="eco-points__layout">
+    <div #map class="eco-points__map" role="application" [attr.aria-label]="language.t('ecoPointsMapLabel')"></div>
+    <ul class="eco-points__list">
+      @for (point of points; track point.id) {
+        <li class="eco-points__item">
+          <button class="eco-points__focus" type="button" (click)="focusPoint(point)">
+            <strong>{{ point.name }}</strong>
+            <span>{{ language.t(point.detail) }}</span>
+          </button>
+          <a [href]="mapUrl(point)" target="_blank" rel="noopener noreferrer">{{ language.t('ecoPointsOpen') }} ↗</a>
+        </li>
+      }
+    </ul>
+  </div>
+</section>
