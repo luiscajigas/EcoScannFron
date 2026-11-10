@@ -153,12 +153,16 @@ export interface components {
         };
         RegisterRequest: {
             name: string;
-            /** Format: email */
+            /**
+             * Format: email
+             * @description Stored in lowercase; emails are compared without case.
+             */
             email: string;
             /** @description bcrypt only takes the first 72 bytes into account. */
             password: string;
         };
         LoginRequest: {
+            /** @description Compared without case. */
             email: string;
             password: string;
         };
