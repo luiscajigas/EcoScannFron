@@ -106,6 +106,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/rankings/weekly": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * The five accounts with the most scans this week, and the caller's own position.
+         * @description The week runs from Monday to Sunday in America/Bogota time, the same for every user. Ties are broken by points awarded.
+         */
+        get: operations["getWeeklyRanking"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/scans": {
         parameters: {
             query?: never;
@@ -213,6 +233,42 @@ export interface components {
                 date: string;
                 count: number;
             }[];
+        };
+        /** @description Only the display name is shared; never the email. */
+        RankingEntry: {
+            position: number;
+            name: string;
+            scans: number;
+            points: number;
+            isMe: boolean;
+        };
+        /** @description me is the caller's own row; it is absent when they have not scanned this week. */
+        WeeklyRanking: {
+            /**
+             * Format: date
+             * @description Monday of the current week.
+             */
+            weekStart: string;
+            /**
+             * Format: date
+             * @description Sunday of the current week, inclusive.
+             */
+            weekEnd: string;
+            timeZone: string;
+            /** @description Best first. Empty when nobody has scanned this week. */
+            entries: components["schemas"]["RankingEntry"][];
+            me?: components["schemas"]["RankingEntry"];
+        };
+        /** @description First and only message the client sends on /api/live. */
+        LiveClientMessage: {
+            /** @enum {string} */
+            type: "auth";
+            token: string;
+        };
+        /** @description ready confirms the authentication; ranking-updated means someone scanned, so the client should fetch the ranking again. */
+        LiveServerMessage: {
+            /** @enum {string} */
+            type: "ready" | "ranking-updated";
         };
         /** @description categoryKey and confidence are the heuristic classification computed by the Web Worker; the backend only uses it when AI is unavailable. */
         ScanRequest: {
@@ -408,6 +464,28 @@ export interface operations {
                 };
             };
             400: components["responses"]["Error"];
+            401: components["responses"]["Error"];
+            500: components["responses"]["Error"];
+        };
+    };
+    getWeeklyRanking: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description This week's ranking. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WeeklyRanking"];
+                };
+            };
             401: components["responses"]["Error"];
             500: components["responses"]["Error"];
         };
