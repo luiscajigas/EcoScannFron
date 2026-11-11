@@ -97,3 +97,13 @@ El logo original está en `design/logo-source.jpg` y no se publica. `public/logo
 **Lo que protege la CSP:** el riesgo real de `localStorage` es que un script ajeno lea el token. La política de `vercel.json` solo permite scripts del propio sitio y conexiones a la propia API, así que un script inyectado no se ejecuta ni puede enviar el token a otro servidor. Por eso se desactivó `inlineCritical`: era el único script en línea de la app.
 
 **Se paga:** si se agrega un servicio externo, como analítica o fuentes de Google, hay que permitirlo en la CSP o el navegador lo bloqueará.
+
+## Ranking en vivo
+
+La página `/ranking` muestra el top 5 de la semana y se actualiza sola cuando alguien escanea.
+
+- **El WebSocket solo avisa:** `LiveUpdatesService` recibe `ranking-updated` y la página vuelve a pedir el ranking por REST. Así los datos siguen tipados por el contrato y no hay dos formas de obtener lo mismo.
+- **`switchMap`:** si llegan dos avisos seguidos, la petición anterior se cancela y nunca se pinta una respuesta vieja encima de una nueva.
+- **Vida de la conexión:** el servicio se provee en la página, no en `root`, así que el WebSocket se abre al entrar al ranking y se cierra al salir.
+- **Reconexión:** espera 1, 2, 5, 10 y 30 segundos entre intentos, para no saturar un servidor que se está despertando. Al reconectar pide el ranking de nuevo, por si hubo escaneos mientras estaba caído. Si el servidor rechaza el token (código 1008) no reintenta, porque sería rechazado igual.
+- **CSP:** `connect-src` permite `wss://ecoscannback.onrender.com`, además de la API.
