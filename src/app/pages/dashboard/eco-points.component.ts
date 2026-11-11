@@ -1,6 +1,8 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import L from 'leaflet';
 import { LanguageService } from '../../services/language.service';
+import { ThemeService } from '../../services/theme.service';
 import { TranslationKey } from '../../i18n/translations';
 
 interface EcoPoint {
@@ -13,6 +15,7 @@ interface EcoPoint {
 
 @Component({
   selector: 'app-eco-points',
+  imports: [RouterLink],
   templateUrl: './eco-points.component.html',
   styleUrl: './eco-points.component.css'
 })
@@ -20,6 +23,7 @@ export class EcoPointsComponent implements AfterViewInit, OnDestroy {
   @ViewChild('map', { static: true }) private mapElement!: ElementRef<HTMLDivElement>;
 
   readonly language = inject(LanguageService);
+  readonly theme = inject(ThemeService);
   readonly mapFailed = signal(false);
   readonly points: EcoPoint[] = [
     { id: 'jumbo-unicentro', name: 'Jumbo Unicentro', latitude: 1.205761, longitude: -77.278463, detail: 'ecoPointJumbo' },

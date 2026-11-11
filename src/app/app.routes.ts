@@ -24,5 +24,11 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./pages/dashboard/dashboard.component').then((m) => m.DashboardComponent)
   },
+  {
+    path: 'puntos-ecologicos',
+    title: 'Puntos ecológicos | EcoScan',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/dashboard/eco-points.component').then((m) => m.EcoPointsComponent)
+  },
   { path: '**', redirectTo: 'login' }
 ];

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { CategoryKey, Scan, ScanResult, UserStats } from '../../models/models';
 import { AuthService } from '../../services/auth.service';
@@ -9,7 +9,6 @@ import { LanguageService } from '../../services/language.service';
 import { ScanService } from '../../services/scan.service';
 import { ThemeService } from '../../services/theme.service';
 import { AnalysisResult } from '../../workers/analysis.messages';
-import { EcoPointsComponent } from './eco-points.component';
 import { ScanHistoryComponent } from './scan-history.component';
 import { ScanResultComponent } from './scan-result.component';
 import { ScanStatsComponent } from './scan-stats.component';
@@ -19,7 +18,7 @@ const HISTORY_PAGE_SIZE = 10;
 
 @Component({
   selector: 'app-dashboard',
-  imports: [EcoPointsComponent, ScanHistoryComponent, ScanResultComponent, ScanStatsComponent],
+  imports: [RouterLink, ScanHistoryComponent, ScanResultComponent, ScanStatsComponent],
   // Provided here so the Worker lives as long as this page.
   providers: [ImageAnalysisService],
   templateUrl: './dashboard.component.html',

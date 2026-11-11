@@ -1,6 +1,94 @@
 :host {
   display: block;
-  margin-top: 1rem;
+  min-height: 100vh;
+}
+
+.eco-page {
+  min-height: 100vh;
+  padding: 1.2rem clamp(1rem, 5vw, 5rem) 4rem;
+  color: #f1f7f2;
+  background:
+    radial-gradient(ellipse at 12% 0%, rgba(75, 126, 75, 0.16), transparent 35rem),
+    #0b120e;
+  font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+}
+
+.eco-page__topbar,
+.eco-page__brand,
+.eco-page__actions {
+  display: flex;
+  align-items: center;
+}
+
+.eco-page__topbar {
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(184, 215, 194, 0.12);
+}
+
+.eco-page__brand {
+  gap: 0.65rem;
+  color: inherit;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.eco-page__brand img {
+  display: block;
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+
+.eco-page__actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
+.eco-page__control {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 36px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(184, 215, 194, 0.12);
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 0.8rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.eco-page__control:hover {
+  border-color: rgba(165, 230, 110, 0.4);
+  background: rgba(165, 230, 110, 0.06);
+}
+
+.eco-page__control:focus-visible,
+.eco-page__brand:focus-visible {
+  outline: 2px solid #c5f78f;
+  outline-offset: 3px;
+}
+
+.eco-page__main {
+  width: min(100%, 1400px);
+  margin: 1.5rem auto 0;
+}
+
+:host-context(:root[data-theme='light']) .eco-page {
+  color: #17251d;
+  background:
+    radial-gradient(ellipse at 12% 0%, rgba(117, 166, 92, 0.13), transparent 35rem),
+    #f3f7f1;
+}
+
+:host-context(:root[data-theme='light']) .eco-page__control {
+  border-color: rgba(61, 93, 66, 0.16);
 }
 
 .eco-points {
@@ -27,7 +115,7 @@
   text-transform: uppercase;
 }
 
-.eco-points__header h3 {
+.eco-points__header h1 {
   margin: 0;
   color: #f1f7f2;
   font-size: 1.2rem;
@@ -127,7 +215,7 @@
   background: linear-gradient(145deg, #fff, #f8fbf6);
 }
 
-:host-context(:root[data-theme='light']) .eco-points__header h3,
+:host-context(:root[data-theme='light']) .eco-points__header h1,
 :host-context(:root[data-theme='light']) .eco-points__focus {
   color: #17251d;
 }
@@ -139,6 +227,8 @@
 :host-context(:root[data-theme='light']) .eco-points__item { border-color: rgba(61, 93, 66, 0.12); background: #f3f7f1; }
 
 @media (max-width: 760px) {
+  .eco-page__topbar { align-items: flex-start; flex-direction: column; }
+  .eco-page__actions { justify-content: flex-start; }
   .eco-points__header { flex-direction: column; }
   .eco-points__layout { grid-template-columns: 1fr; }
   .eco-points__map { min-height: 330px; }
