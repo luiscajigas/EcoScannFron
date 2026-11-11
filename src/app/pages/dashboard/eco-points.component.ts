@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild, inject, signal } from '@angular/core';
+import L from 'leaflet';
 import { LanguageService } from '../../services/language.service';
 import { TranslationKey } from '../../i18n/translations';
 
@@ -50,11 +51,8 @@ export class EcoPointsComponent implements AfterViewInit, OnDestroy {
     return `https://www.openstreetmap.org/?mlat=${point.latitude}&mlon=${point.longitude}#map=17/${point.latitude}/${point.longitude}`;
   }
 
-  private async initializeMap(): Promise<void> {
+  private initializeMap(): void {
     try {
-      const L = await import('leaflet');
-      if (this.destroyed) return;
-
       const map = L.map(this.mapElement.nativeElement, { scrollWheelZoom: false });
       this.map = map;
 
