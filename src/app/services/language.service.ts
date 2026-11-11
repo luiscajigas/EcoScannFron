@@ -84,6 +84,11 @@ export class LanguageService {
     return this.formatCalendarDate(date, { weekday: 'long', day: 'numeric', month: 'short' });
   }
 
+  /** Day and month of a calendar day, for example "9 de noviembre". */
+  formatShortDate(date: string): string {
+    return this.formatCalendarDate(date, { day: 'numeric', month: 'long' });
+  }
+
   formatWeekday(date: string): string {
     return this.formatCalendarDate(date, { weekday: 'short' });
   }

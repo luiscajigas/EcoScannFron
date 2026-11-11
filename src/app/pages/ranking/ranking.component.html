@@ -1,0 +1,78 @@
+<div class="rank-page">
+  <header class="rank-page__topbar">
+    <a class="rank-page__brand" routerLink="/dashboard" aria-label="EcoScan">
+      <img src="/logo.png" width="44" height="44" alt="" aria-hidden="true" />
+      <span>EcoScan</span>
+    </a>
+    <nav class="rank-page__actions" [attr.aria-label]="language.t('rankingNavigation')">
+      <button class="rank-page__control" type="button" (click)="language.toggle()" [attr.aria-label]="language.t('switchLanguage')">
+        {{ language.current() === 'es' ? 'EN' : 'ES' }}
+      </button>
+      <button class="rank-page__control" type="button" (click)="theme.toggle()" [attr.aria-label]="theme.isLight() ? language.t('themeDarkAria') : language.t('themeLightAria')">
+        <span aria-hidden="true">{{ theme.isLight() ? '☾' : '☀' }}</span>
+        {{ theme.isLight() ? language.t('themeDark') : language.t('themeLight') }}
+      </button>
+      <a class="rank-page__control" routerLink="/dashboard">← {{ language.t('rankingBack') }}</a>
+    </nav>
+  </header>
+
+  <main class="rank-page__main">
+    <section class="ranking" aria-labelledby="ranking-title">
+      <header class="ranking__header">
+        <div>
+          <p class="ranking__eyebrow">{{ language.t('rankingEyebrow') }}</p>
+          <h1 id="ranking-title">{{ language.t('rankingTitle') }}</h1>
+          @if (ranking(); as week) {
+            <p class="ranking__week">
+              {{ language.t('rankingWeekFrom') }} {{ language.formatShortDate(week.weekStart) }}
+              {{ language.t('rankingWeekTo') }} {{ language.formatShortDate(week.weekEnd) }}
+            </p>
+          }
+        </div>
+        <p class="ranking__status ranking__status--{{ live.status() }}" role="status">
+          <span class="ranking__dot" aria-hidden="true"></span>
+          @switch (live.status()) {
+            @case ('live') { {{ language.t('rankingLive') }} }
+            @case ('connecting') { {{ language.t('rankingConnecting') }} }
+            @default { {{ language.t('rankingOffline') }} }
+          }
+        </p>
+      </header>
+      <p class="ranking__intro">{{ language.t('rankingIntro') }}</p>
+
+      @if (isLoading()) {
+        <p class="ranking__empty">{{ language.t('rankingLoading') }}</p>
+      } @else if (error(); as message) {
+        <p class="ranking__error" role="alert">{{ message }}</p>
+      } @else if (ranking(); as week) {
+        @if (week.entries.length) {
+          <ol class="ranking__list" aria-live="polite">
+            @for (entry of week.entries; track entry.position) {
+              <li class="ranking__row ranking__row--{{ entry.position }}" [class.ranking__row--me]="entry.isMe">
+                <span class="ranking__position" aria-hidden="true">{{ entry.position }}</span>
+                <span class="ranking__name">
+                  {{ entry.name }}
+                  @if (entry.isMe) {
+                    <span class="ranking__you">{{ language.t('rankingYou') }}</span>
+                  }
+                </span>
+                <span class="ranking__scans">{{ scansLabel(entry.scans) }}</span>
+                <span class="ranking__points">{{ entry.points }} pts</span>
+              </li>
+            }
+          </ol>
+          @if (ownRowOutsideTop(); as me) {
+            <p class="ranking__mine">
+              {{ language.t('rankingYourPosition') }}: <strong>#{{ me.position }}</strong> · {{ scansLabel(me.scans) }} · {{ me.points }} pts
+            </p>
+          }
+        } @else {
+          <div class="ranking__empty">
+            <p>{{ language.t('rankingEmpty') }}</p>
+            <a class="ranking__cta" routerLink="/dashboard">{{ language.t('rankingScanNow') }}</a>
+          </div>
+        }
+      }
+    </section>
+  </main>
+</div>

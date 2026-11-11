@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { CategoryKey, Scan, ScanRequest, ScanResult, UserStats } from '../models/models';
+import { CategoryKey, Scan, ScanRequest, ScanResult, UserStats, WeeklyRanking } from '../models/models';
 
 export interface HistoryQuery {
   limit: number;
@@ -23,6 +23,10 @@ export class ScanService {
 
   getStats(timeZone: string): Observable<UserStats> {
     return this.http.get<UserStats>(`${this.apiUrl}/users/me/stats`, { params: { timeZone } });
+  }
+
+  getWeeklyRanking(): Observable<WeeklyRanking> {
+    return this.http.get<WeeklyRanking>(`${this.apiUrl}/rankings/weekly`);
   }
 
   create(request: ScanRequest): Observable<ScanResult> {

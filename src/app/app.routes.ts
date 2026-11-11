@@ -25,6 +25,12 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/dashboard/dashboard.component').then((m) => m.DashboardComponent)
   },
   {
+    path: 'ranking',
+    title: 'Ranking semanal | EcoScan',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/ranking/ranking.component').then((m) => m.RankingComponent)
+  },
+  {
     path: 'puntos-ecologicos',
     title: 'Puntos ecológicos | EcoScan',
     canActivate: [authGuard],

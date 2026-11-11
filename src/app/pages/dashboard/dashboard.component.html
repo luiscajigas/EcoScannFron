@@ -15,6 +15,7 @@
         <span aria-hidden="true">{{ theme.isLight() ? '☾' : '☀' }}</span>
         {{ theme.isLight() ? language.t('themeDark') : language.t('themeLight') }}
       </button>
+      <a class="link" routerLink="/ranking">{{ language.t('rankingButton') }}</a>
       <a class="link" routerLink="/puntos-ecologicos">{{ language.t('ecoPointsTitle') }}</a>
       @if (user(); as account) {
         <div class="user-pill">
